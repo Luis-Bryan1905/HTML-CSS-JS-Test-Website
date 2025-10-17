@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>
+        SampleModule
+    </title>
+
+</head>
+
+<body>
+
+    <h1>
+        Hello World!
+    </h1>
+
+    <h1 id="demo">
+        
+    </h1>
+
+    <script type="module">
+
+        import { name, age } from "./Resources/JS/animal.js";
+
+        let text = "This is my pet, they are a " + name + " and they are " + age + " years old.";
+
+        document.querySelector("button").addEventListener("click", () => 
+        {
+            document.getElementById("demo").innerHTML = text;
+        });
+
+    </script>
+
+    <button onClick="changeVar();">
+        click
+    </button>
+
+</body>
+
+</html>

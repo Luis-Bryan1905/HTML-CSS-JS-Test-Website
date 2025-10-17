@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <title>
+            Hello World!
+        </title>
+
+    </head>
+
+    <body>
+
+        <h1>
+            Hello World!
+        </h1>
+
+        <h1 id="demo">
+            My App
+        </h1>
+
+        <h1 id="demo2">
+            Example Text
+        </h1>
+
+        <h1 id="jsdemo">
+            Example Text
+        </h1>
+
+        <script>
+
+            //ES5 Variables
+            var x = 1;
+
+            var y = 5; 
+
+            var name = "Luis Bryan"
+
+            var hasBook = true;
+
+            name = "Nathan";
+
+            x = x + 1;
+
+            document.getElementById("demo").innerHTML = "Demo 1: " + name;
+
+            //ES5 Function
+            function addItems(a, b)
+            {
+            
+                return a + b;
+
+            }
+
+            console.log("addItems Results = " + addItems(x, y));
+
+            //ES6 Variables
+            let page = 1;
+
+            let isAvailable = true;
+
+            let bookName = "harry";
+
+            let px = 5;
+            let py = 7;
+            
+            const height = 170;
+
+            page = page + 4;
+            page = 30*5;
+            hefith = 180;
+
+            document.getElementById("demo2").innerHTML = "Demo 2: " + height;
+
+            //ES6 Function
+            multiplyItems = (a, b) => a * b;
+            let result = multiplyItems(px, py);
+            console.log("multiplyItems Results = " + result);
+
+        </script>
+
+        <script type="module"> 
+
+            import { name, age } from "./Resources/JS/person.js"; 
+
+            let text = "My name is " + name + ", I am " + age + "."; 
+
+            console.log("This is a test");
+            document.getElementById("jsdemo").innerHTML = text;
+
+        </script>
+
+    </body>
+
+</html>
