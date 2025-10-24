@@ -72,7 +72,7 @@ let MoveSpeed = 0.025; // movement speed
 let CubeAnimationSpeed = 0.025; // Cube animation speed
 let TorusAnimationSpeed = 0.02; // Torus animation speed
 
-camera.position.z = 3; // Camera Distance
+camera.position.z = 4; // Camera Distance
 
 function animate() { // Animation Function
 
@@ -112,3 +112,48 @@ function animate() { // Animation Function
   renderer.render( scene, camera ); // Render Scene
 
 }
+
+function onWindowresize() // function to resize when when changed
+{
+    camera.aspect = window.innerWidth / window.innerHeight; // set the aspect ratio to match new window size
+
+    camera.updateProjectionMatrix(); // update the camera's frustum
+
+    renderer.setSize(window.innerWidth, window.innerHeight); // Update size of the renderer and camera
+}
+
+window.addEventListener("resize", onWindowresize); // to activate function window size is changed
+
+const createskybox = () => // Skybox function
+{
+
+    let bgMesh;
+
+    const loader = new THREE.TextureLoader();
+    loader.load
+    (
+        'Resources/Images/skybox.jpg', 
+        function(texture)
+        {
+            // create sphere
+            let sphereGeometry = new THREE.SphereGeometry( 100, 60, 40 );  // Create new geometry met and set its X, Y & Z scale
+
+            // set the sphere texture
+            const SphereMaterial = new THREE.MeshBasicMaterial // Basic Material
+            ( { 
+                map:texture,
+                side: THREE.DoubleSide
+            } );
+
+            // scale the sphere
+            sphereGeometry.scale(-1, 1, 1);
+            
+            bgMesh = new THREE.Mesh(sphereGeometry, SphereMaterial);
+            scene.add(bgMesh)
+            
+        } 
+    );
+
+}
+
+createskybox();

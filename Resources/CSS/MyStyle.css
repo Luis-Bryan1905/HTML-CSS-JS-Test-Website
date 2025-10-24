@@ -75,3 +75,15 @@ img
 {
   width:100%;
 }
+
+.overlay-text
+{
+  
+  background-color: #2196F3;
+  padding: 15px;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color:white;
+}
