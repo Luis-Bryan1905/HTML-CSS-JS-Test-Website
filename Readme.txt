@@ -1,7 +1,7 @@
 Game Name:
 Author: Luis Bryan
 Update Date/Time:
-Version:
+Version: 0.1
 Description:
 How to Play:
 
@@ -12,6 +12,7 @@ Root:
 	-- JS:	   contains all JavaScript files
 	-- Images: contains all Images files
 	-- Music:  contains all Music files
+	-- Models:  contains all Model files
 
 References:
 Background is referenced from: https://www.freepik.com/free-vector/matrix-style-binary-code-digital-falling-numbers-blue-background_24600855.htm
