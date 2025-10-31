@@ -5,7 +5,6 @@ import { OrbitControls } from "https://unpkg.com/three@0.169.0/examples/jsm/cont
 const scene = new THREE.Scene(); // Initialise 3D scene
 
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 ); // Create Camera object
-
 const renderer = new THREE.WebGLRenderer(); // Initialise 3D renderer
 
 renderer.setSize( window.innerWidth, window.innerHeight ); // Set Render Size
@@ -102,7 +101,7 @@ const createskybox = () => // Skybox function
             } );
 
             // scale the sphere
-            sphereGeometry.scale(-1, 1, 1);
+            sphereGeometry.scale(8, 8, 8);
             
             bgMesh = new THREE.Mesh(sphereGeometry, SphereMaterial);
             scene.add(bgMesh)
@@ -130,26 +129,75 @@ const Start=()=> //button function
 {
     Started = true;
 } 
+document.getElementById("StartButton").addEventListener("click", Start) //create event listener for start button
 
 const Stop=()=> //button function
 {
     Started = false;
 } 
+document.getElementById("StopButton").addEventListener("click", Stop) //create event listener for stop button
 
-//create event listener for button
-document.getElementById("StartButton").addEventListener("click", Start)
+const Up=()=> //button function
+{
+    Started = true;
+} 
+document.getElementById("StartButton").addEventListener("click", Start) //create event listener for start button
 
-//create event listener for button
-document.getElementById("StopButton").addEventListener("click", Stop)
+let RotationCoordinates = 0;
+
+let XPosition = 0;
+let YPosition = 0;
+let ZPosition = 0;
+
+const MoveUp =()=>
+{
+    model.position.y += 1;
+}
+
+const MoveDown =()=>
+{
+    model.position.y -= 1;
+}
+
+const MoveLeft =()=>
+{
+    model.position.x -= 1;
+}
+
+const MoveRight =()=>
+{
+    model.position.x += 1;
+}
+
 
 function animate() 
 { // Animation Function
 
-  if (Started) {
-    // Rotate the model
-    model.rotation.y += 0.001;
+  if (model) {
+    if (Started) {
+      // Rotate the model
+      model.rotation.y += 0.005;
+      RotationCoordinates = model.rotation.y;
+    }
+
+    XPosition = model.position.x;
+    YPosition = model.position.y;
+    ZPosition = model.position.z;
   }
 
+
+
+  document.getElementById("UpButton").addEventListener("click", MoveUp);
+  document.getElementById("DownButton").addEventListener("click", MoveDown);
+  document.getElementById("LeftButton").addEventListener("click", MoveLeft);
+  document.getElementById("RightButton").addEventListener("click", MoveRight);
+
   renderer.render( scene, camera ); // Render Scene
+
+  document.getElementById("Coordinates").innerHTML = ("Rotation Coordinates: " + RotationCoordinates.toFixed(3));
+  document.getElementById("XPosition").innerHTML = ("X Position: " + XPosition.toFixed(2));
+  document.getElementById("YPosition").innerHTML = ("Y Position: " + YPosition.toFixed(2));
+  document.getElementById("ZPosition").innerHTML = ("Z Position: " + ZPosition.toFixed(2));
+  
 
 }
