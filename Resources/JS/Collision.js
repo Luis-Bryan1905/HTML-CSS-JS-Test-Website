@@ -88,7 +88,7 @@ const createskybox = () => // Skybox function
     const loader = new THREE.TextureLoader();
     loader.load
     (
-        'Resources/Images/skybox.jpg', 
+        'Resources/Images/starcitybackground.jpg', 
         function(texture)
         {
             // create sphere
