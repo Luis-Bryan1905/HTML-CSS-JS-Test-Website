@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <meta name="viewport" content="width=device-width">
+
+        <title>
+            Performance Test
+        </title>
+
+        <link rel="stylesheet" href="Resources/CSS/MyStyle.css">
+        
+    </head>
+
+    <audio autoplay>
+        <source src="./Resources/frankum_ambient-electronic-music.mp3"" type="audio/mpeg">
+    </audio>
+
+    <body>
+
+        <div class="container">
+
+            <div class="header">
+
+                    <h1>
+                        Performance Test
+                    </h1>
+
+                    <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"> </script>
+
+                    <script type="importmap"> 
+                        { 
+                            "imports": 
+                            { 
+                                "three":"https://unpkg.com/three@0.169.0/build/three.module.js" 
+                            } 
+                        } 
+                        </script>
+
+                    <script type = "module" src= "./Resources/JS/PerformanceTest.js"></script>
+
+
+                    <script src= "./Resources/JS/eventhandler.js"></script>
+
+            </div>
+
+        </div>
+
+    </body>
+
+</html>
