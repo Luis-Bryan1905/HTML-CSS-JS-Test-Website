@@ -10,6 +10,7 @@ const renderer = new THREE.WebGLRenderer(); // Initialise 3D renderer
 renderer.setSize( window.innerWidth, window.innerHeight ); // Set Render Size
 
 renderer.setAnimationLoop( animate ); // Start animation
+renderer.shadowMap.enabled = true;
 
 document.body.appendChild( renderer.domElement ); // add the renderer to the HTML
 
@@ -39,13 +40,15 @@ const material5 = new THREE.MeshPhongMaterial // Material that can simulate shin
         {
             // Add the loaded scene to your Three.js scene
             model = gltf.scene;
+            model.castShadow = true;
+            model.receiveShadow = true;
             scene.add(model);
         },
     );
 
 
 const Light = new THREE.DirectionalLight( 0xffffff, 3 ); // soft white light// White directional light at half intensity shining from the top.
-
+Light.castShadow = true;
 scene.add( Light ); // Add directional light to scene
 
 
