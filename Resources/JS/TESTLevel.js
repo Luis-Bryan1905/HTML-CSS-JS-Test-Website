@@ -15,8 +15,7 @@ renderer.shadowMap.enabled = true;
 document.body.appendChild( renderer.domElement ); // add the renderer to the HTML
 
 let model = null; // Declare model globally
-
-const geometry = new THREE.BoxGeometry( 1, 1, 1 ); // Create new geometry met and set its X, Y & Z scale
+let groundBox = null;
 
 const material5 = new THREE.MeshPhongMaterial // Material that can simulate shiny surfaces with specular highlights
 ( { 
@@ -29,39 +28,106 @@ const material5 = new THREE.MeshPhongMaterial // Material that can simulate shin
     
 } );
 
-    // Create a GLTFLoader instance
-    const loader = new GLTFLoader();
+//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+const CapsuleGeometry = new THREE.CapsuleGeometry( 1, 1, 4, 8, 1 );
+const Player = new THREE.Mesh( CapsuleGeometry, material5 ); // Create cube object and set material
+scene.add(Player);
+Player.position.x = -15;
+Player.position.y = 20;
+Player.position.z = 15;
+CapsuleGeometry.scale(1, 1, 1); // scale the sphere
 
-    // Load the GLTF model
-    loader.load
-    (
-        'Resources/Models/TestLevel.glb', // Path to the GLTF file
-        (gltf) => 
-        {
-            // Add the loaded scene to your Three.js scene
-            model = gltf.scene;
-            model.castShadow = true;
-            model.receiveShadow = true;
-            scene.add(model);
-        },
-    );
+
+const loader = new GLTFLoader();// Create a GLTFLoader instance
+loader.load // Load the GLTF model
+(
+    'Resources/Models/TestLevel/TestLevel.glb', // Path to the GLTF file
+    (gltf) => 
+    {
+        model = gltf.scene;
+        model.castShadow = true;
+        model.receiveShadow = true;
+        scene.add(model); // Add the loaded scene to your Three.js scene
+        
+        groundBox = new THREE.Box3().setFromObject(model);
+    },
+);
+
+const Groundgeometry = new THREE.BoxGeometry( 1, 1, 1 ); // Create new geometry met and set its X, Y & Z scale
 
 
 const Light = new THREE.DirectionalLight( 0xffffff, 3 ); // soft white light// White directional light at half intensity shining from the top.
 Light.castShadow = true;
 scene.add( Light ); // Add directional light to scene
 
-
-
 camera.position.z = 42; // Camera Distance
 camera.position.y = 15;
 camera.rotation.x = -0.27
 
-function animate() { // Animation Function
+const gravity = -0.01; //gravity speed
+let velocityY = 0;     // vertical speed
 
-  renderer.render( scene, camera ); // Render Scene
+function animate()  // Animation Function
+{
+       
+    if (groundBox) {
 
+        // Apply gravity
+        velocityY += gravity;
+        Player.position.y += velocityY;
+    
+        // Compute player bounding box
+        const playerBox = new THREE.Box3().setFromObject(Player);
+    
+        // Check collision
+       // if (playerBox.min.y <= groundBox.max.y) {
+        if (playerBox.intersectsBox(groundBox)) {
+    
+            // COLLIDED WITH GROUND
+            Player.position.y = 0.35 +  groundBox.max.y + (Player.geometry.parameters.radiusTop || 1);
+            velocityY = 0; // Stop falling
+        }
+    }
+  
+    renderer.render( scene, camera ); // Render Scene
 }
+
+window.addEventListener("keydown", (event) => 
+    {
+        console.log(Event)
+
+        switch (event.code)
+        {
+            case "KeyA":
+                console.log("KeyA")
+                Player.position.x -= 1;
+                break
+
+            case "KeyD":
+                console.log("KeyD")
+                Player.position.x += 1;
+                break
+
+            case "KeyW":
+                console.log("KeyW")
+                Player.position.z -= 1;
+                break
+    
+            case "KeyS":
+                console.log("KeyS")
+                Player.position.z += 1;
+                break
+
+            case "Space":
+                console.log("Space")
+                Player.position.y += 5;
+                break
+    
+
+
+        }
+    
+    }); // to activate function window size is changed
 
 function onWindowresize() // function to resize when when changed
 {
@@ -86,7 +152,7 @@ const createskybox = () => // Skybox function
         function(texture)
         {
             // create sphere
-            let sphereGeometry = new THREE.SphereGeometry( 1000, 60, 40 );  // Create new geometry met and set its X, Y & Z scale
+            let sphereGeometry = new THREE.SphereGeometry( 100, 60, 40 );  // Create new geometry met and set its X, Y & Z scale
 
             // set the sphere texture
             const SphereMaterial = new THREE.MeshBasicMaterial // Basic Material
