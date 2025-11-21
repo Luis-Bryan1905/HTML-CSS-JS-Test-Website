@@ -4,7 +4,7 @@ const scene = new THREE.Scene(); // Initialise 3D scene
 
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 ); // Create Camera object
 
-const renderer = new THREE.WebGLRenderer(); // Initialise 3D renderer
+const renderer = new THREE.WebGLRenderer({ antialias: true }); // Initialise 3D renderer + anti-aliasing
 
 renderer.setSize( window.innerWidth, window.innerHeight ); // Set Render Size
 
