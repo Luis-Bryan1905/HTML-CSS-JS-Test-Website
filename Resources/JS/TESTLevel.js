@@ -64,8 +64,12 @@ camera.position.z = 42; // Camera Distance
 camera.position.y = 15;
 camera.rotation.x = -0.27
 
-const gravity = -0.01; //gravity speed
+const gravity = -0.005; //gravity speed
 let velocityY = 0;     // vertical speed
+
+let XPosition = 0;
+let YPosition = 0;
+let ZPosition = 0;
 
 function animate()  // Animation Function
 {
@@ -86,9 +90,16 @@ function animate()  // Animation Function
             // COLLIDED WITH GROUND
             Player.position.y = 0.35 +  groundBox.max.y + (Player.geometry.parameters.radiusTop || 1);
             velocityY = 0; // Stop falling
+            
         }
     }
-  
+
+    YPosition = Player.position.y- 3.35;
+
+    document.getElementById("XPosition").innerHTML = ("X Position: " + XPosition.toFixed(2));
+    document.getElementById("YPosition").innerHTML = ("Y Position: " + YPosition.toFixed(2));
+    document.getElementById("ZPosition").innerHTML = ("Z Position: " + ZPosition.toFixed(2));
+
     renderer.render( scene, camera ); // Render Scene
 }
 
@@ -101,26 +112,32 @@ window.addEventListener("keydown", (event) =>
             case "KeyA":
                 console.log("KeyA")
                 Player.position.x -= 1;
+                XPosition = Player.position.x;
+                
                 break
 
             case "KeyD":
                 console.log("KeyD")
                 Player.position.x += 1;
+                XPosition = Player.position.x;
                 break
 
             case "KeyW":
                 console.log("KeyW")
                 Player.position.z -= 1;
+                ZPosition = Player.position.z;
                 break
     
             case "KeyS":
                 console.log("KeyS")
                 Player.position.z += 1;
+                ZPosition = Player.position.z;
                 break
 
             case "Space":
                 console.log("Space")
                 Player.position.y += 5;
+
                 break
     
 
