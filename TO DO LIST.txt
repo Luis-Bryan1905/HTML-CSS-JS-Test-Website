@@ -1,0 +1,74 @@
+FINISHED (WEBSITE):
+
+Basic HTML website
+
+Style CSS
+
+Index/Home Page
+
+Working 404 Page
+
+Mock-Up Login & Register Page
+
+Loading Page
+
+Music on Website
+
+
+FINISHED (GAME):
+
+3D Model Loader
+
+Sky Box
+
+Basic Game Demo (clunky movment and can't move while jump & box-only collision)
+
+--------------------------------------------------------------------------------------------
+TO DO (WEBSITE): 
+
+Working Account database
+
+Working Login & Register Page
+
+Improve website aesthetics
+
+
+TO DO (GAME):
+
+Game UI
+
+Improve Movement & Physics
+
+Actual Level Design
+
+Level Loading
+
+Player Model
+
+Player Animation?
+
+Main Menu
+
+Level Select Screen
+
+Lives 
+
+Game Over screen
+
+Enemies
+
+Colectibles
+
+Level Goal
+
+Level assets  
+
+Level skyboxes
+
+Level Music
+
+Sound Effects
+
+--------------------------------------------------------------------------------------------
+WEBSITE = 7/10 = 70% Complete
+GAME = 3/20 =  15% Complete
