@@ -45,7 +45,7 @@ Level Loading
 
 Player Model
 
-Player Animation?
+Player Animations
 
 Main Menu
 

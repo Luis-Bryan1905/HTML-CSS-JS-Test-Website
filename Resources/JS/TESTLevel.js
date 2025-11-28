@@ -31,9 +31,11 @@ const material5 = new THREE.MeshPhongMaterial // Material that can simulate shin
 //const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 const CapsuleGeometry = new THREE.CapsuleGeometry( 1, 1, 4, 8, 1 );
 const Player = new THREE.Mesh( CapsuleGeometry, material5 ); // Create cube object and set material
+Player.receiveShadow = true;
+Player.castShadow = true;
 scene.add(Player);
-Player.position.x = -15;
-Player.position.y = 20;
+Player.position.x = 0;
+Player.position.y = 0;
 Player.position.z = 15;
 CapsuleGeometry.scale(1, 1, 1); // scale the sphere
 
@@ -45,8 +47,13 @@ loader.load // Load the GLTF model
     (gltf) => 
     {
         model = gltf.scene;
-        model.castShadow = true;
-        model.receiveShadow = true;
+
+        model.traverse((child) => { //Shadow Fix
+        if (child.isMesh) {
+            child.receiveShadow = true;
+        }
+        });
+        
         scene.add(model); // Add the loaded scene to your Three.js scene
         
         groundBox = new THREE.Box3().setFromObject(model);
@@ -57,29 +64,52 @@ const Groundgeometry = new THREE.BoxGeometry( 1, 1, 1 ); // Create new geometry 
 
 
 const Light = new THREE.DirectionalLight( 0xffffff, 3 ); // soft white light// White directional light at half intensity shining from the top.
-Light.castShadow = true;
+Light.position.set(20, 40, 20);
+Light.target.position.set(0, 0, 0);Light.castShadow = true;
 scene.add( Light ); // Add directional light to scene
 
 camera.position.z = 42; // Camera Distance
 camera.position.y = 15;
 camera.rotation.x = -0.27
 
-const gravity = -0.005; //gravity speed
-let velocityY = 0;     // vertical speed
+
+// shadow settings
+Light.shadow.mapSize.width = 2048;
+Light.shadow.mapSize.height = 2048;
+
+Light.shadow.camera.left = -50;
+Light.shadow.camera.right = 50;
+Light.shadow.camera.top = 50;
+Light.shadow.camera.bottom = -50;
+
+Light.shadow.camera.near = 1;
+Light.shadow.camera.far = 200;
+
+const gravity = -0.05; // Gravity speed
+const Speed = 0.5;
+let velocityY = 0;     // Vertical speed
+let velocityX = 0;     // Horizontal speed
+let velocityZ = 0;     // Forwrds and Backwards speed
 
 let XPosition = 0;
 let YPosition = 0;
 let ZPosition = 0;
 
+let canJump;
+
 function animate()  // Animation Function
 {
-       
-    if (groundBox) {
+    Player.position.x += velocityX;
+    XPosition = Player.position.x;
 
-        // Apply gravity
-        velocityY += gravity;
-        Player.position.y += velocityY;
-    
+    Player.position.z += velocityZ;
+    ZPosition = Player.position.z;
+
+    // Apply gravity
+    velocityY += gravity;
+    Player.position.y += velocityY;
+
+    if (groundBox) {
         // Compute player bounding box
         const playerBox = new THREE.Box3().setFromObject(Player);
     
@@ -90,7 +120,12 @@ function animate()  // Animation Function
             // COLLIDED WITH GROUND
             Player.position.y = 0.35 +  groundBox.max.y + (Player.geometry.parameters.radiusTop || 1);
             velocityY = 0; // Stop falling
+            canJump = true;
             
+        }
+        else
+        {
+            canJump = false;
         }
     }
 
@@ -111,40 +146,70 @@ window.addEventListener("keydown", (event) =>
         {
             case "KeyA":
                 console.log("KeyA")
-                Player.position.x -= 1;
-                XPosition = Player.position.x;
-                
+                velocityX = -Math.abs(Speed);
                 break
 
             case "KeyD":
                 console.log("KeyD")
-                Player.position.x += 1;
-                XPosition = Player.position.x;
+                velocityX = Speed;
                 break
 
             case "KeyW":
                 console.log("KeyW")
-                Player.position.z -= 1;
-                ZPosition = Player.position.z;
+                velocityZ = -Math.abs(Speed);
                 break
     
             case "KeyS":
                 console.log("KeyS")
-                Player.position.z += 1;
-                ZPosition = Player.position.z;
+                velocityZ = Speed;
                 break
 
             case "Space":
                 console.log("Space")
-                Player.position.y += 5;
-
+                if (canJump)
+                {
+                velocityY = 1;
+                }
                 break
-    
+            
+            default:
+                break
 
 
         }
     
-    }); // to activate function window size is changed
+    });
+
+    window.addEventListener("keyup", (event) => 
+    {
+        switch (event.code)
+        {
+            case "KeyA":
+                velocityX = 0;
+                break
+
+            case "KeyD":
+                velocityX = 0; 
+                break
+
+            case "KeyW":
+                velocityZ = 0;
+                break
+
+            case "KeyS":
+                velocityZ = 0; 
+                break
+            
+            case "Space":
+                velocityY = 0;
+                break
+            
+            default:
+                break
+
+
+        }
+    });
 
 function onWindowresize() // function to resize when when changed
 {
