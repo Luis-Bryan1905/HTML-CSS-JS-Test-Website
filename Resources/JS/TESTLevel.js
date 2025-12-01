@@ -85,8 +85,9 @@ Light.shadow.camera.bottom = -50;
 Light.shadow.camera.near = 1;
 Light.shadow.camera.far = 200;
 
-const gravity = -0.05; // Gravity speed
-const Speed = 0.5;
+const gravity = -0.01; // Gravity speed
+const Speed = 0.15;
+const JumpForce = 0.5;
 let velocityY = 0;     // Vertical speed
 let velocityX = 0;     // Horizontal speed
 let velocityZ = 0;     // Forwrds and Backwards speed
@@ -168,7 +169,7 @@ window.addEventListener("keydown", (event) =>
                 console.log("Space")
                 if (canJump)
                 {
-                velocityY = 1;
+                velocityY = JumpForce;
                 }
                 break
             
