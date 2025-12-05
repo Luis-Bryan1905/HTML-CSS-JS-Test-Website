@@ -10,7 +10,8 @@ const renderer = new THREE.WebGLRenderer({ antialias: true }); // Initialise 3D 
 renderer.setSize( window.innerWidth, window.innerHeight ); // Set Render Size
 
 renderer.setAnimationLoop( animate ); // Start animation
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = true; // Enable shadows
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
 
 document.body.appendChild( renderer.domElement ); // add the renderer to the HTML
 
@@ -54,8 +55,10 @@ loader.load // Load the GLTF model
     {
         model = gltf.scene;
         model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) {
+        if (child.isMesh) 
+        {
             child.receiveShadow = true;
+            
         }});
         scene.add(model); // Add the loaded scene to your Three.js scene
         grounds.push(new THREE.Box3().setFromObject(model));
@@ -69,8 +72,10 @@ loader.load // Load the GLTF model
     {
         model = gltf.scene;
         model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) {
+        if (child.isMesh) 
+        {
             child.receiveShadow = true;
+            child.castShadow = true;
         }});
         scene.add(model); // Add the loaded scene to your Three.js scene
         grounds.push(new THREE.Box3().setFromObject(model));
@@ -84,8 +89,10 @@ loader.load // Load the GLTF model
     {
         model = gltf.scene;
         model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) {
+        if (child.isMesh) 
+        {
             child.receiveShadow = true;
+            child.castShadow = true;
         }});
         scene.add(model); // Add the loaded scene to your Three.js scene
         grounds.push(new THREE.Box3().setFromObject(model));
@@ -99,8 +106,10 @@ loader.load // Load the GLTF model
     {
         model = gltf.scene;
         model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) {
+        if (child.isMesh) 
+        {
             child.receiveShadow = true;
+            child.castShadow = true;
         }});
         scene.add(model); // Add the loaded scene to your Three.js scene
         grounds.push(new THREE.Box3().setFromObject(model));
@@ -114,8 +123,10 @@ loader.load // Load the GLTF model
     {
         model = gltf.scene;
         model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) {
+        if (child.isMesh) 
+        {
             child.receiveShadow = true;
+            child.castShadow = true;
         }});
         scene.add(model); // Add the loaded scene to your Three.js scene
         grounds.push(new THREE.Box3().setFromObject(model));
@@ -133,13 +144,15 @@ camera.rotation.x = -0.27
 
 
 // shadow settings
-Light.shadow.mapSize.width = 2048;
-Light.shadow.mapSize.height = 2048;
+let shadow = 25;
+Light.shadow.mapSize.set(2048, 2048);
+Light.shadow.bias = -0.0001; // Small negative bias to reduce acne
+Light.shadow.normalBias = 0.02; // Helps with peter-panning
 
-Light.shadow.camera.left = -50;
-Light.shadow.camera.right = 50;
-Light.shadow.camera.top = 50;
-Light.shadow.camera.bottom = -50;
+Light.shadow.camera.left = -shadow;
+Light.shadow.camera.right = shadow;
+Light.shadow.camera.top = shadow;
+Light.shadow.camera.bottom = -shadow;
 
 Light.shadow.camera.near = 1;
 Light.shadow.camera.far = 200;
@@ -147,23 +160,18 @@ Light.shadow.camera.far = 200;
 const gravity = -0.02; // Gravity speed
 const Speed = 0.25;
 const JumpForce = 0.5;
+
 let velocityY = 0;     // Vertical speed
 let velocityX = 0;     // Horizontal speed
 let velocityZ = 0;     // Forwrds and Backwards speed
 
-let XPosition = 0;
-let YPosition = 0;
-let ZPosition = 0;
-
-let canJump;
+let canJump; // Can the player Jump?
 
 function animate()  // Animation Function
 {
     Player.position.x += velocityX;
-    XPosition = Player.position.x;
 
     Player.position.z += velocityZ;
-    ZPosition = Player.position.z;
 
     // Apply gravity
     velocityY += gravity;
@@ -205,12 +213,6 @@ for (const ground of grounds) {
     }
     
 }
-
-    YPosition = Player.position.y - 3.50;
-
-    document.getElementById("XPosition").innerHTML = ("X Position: " + XPosition.toFixed(2));
-    document.getElementById("YPosition").innerHTML = ("Y Position: " + YPosition.toFixed(2));
-    document.getElementById("ZPosition").innerHTML = ("Z Position: " + ZPosition.toFixed(2));
 
     renderer.render( scene, camera ); // Render Scene
 }

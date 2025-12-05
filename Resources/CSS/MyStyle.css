@@ -6,6 +6,18 @@ body
   background-position: center;
 }
 
+canvas 
+{
+  overflow: hidden;
+}
+
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
 ac 
 {
   text-align: center;

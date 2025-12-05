@@ -23,6 +23,8 @@ Sky Box
 
 Basic Game Demo (clunky movment and can't move while jump & box-only collision)
 
+Improved Movement & Physics
+
 --------------------------------------------------------------------------------------------
 TO DO (WEBSITE): 
 
@@ -32,12 +34,9 @@ Working Login & Register Page
 
 Improve website aesthetics
 
-
 TO DO (GAME):
 
 Game UI
-
-Improve Movement & Physics
 
 Actual Level Design
 
@@ -57,13 +56,13 @@ Game Over screen
 
 Enemies
 
-Colectibles
+Collectibles
 
 Level Goal
 
-Level assets  
+New Level assets  
 
-Level skyboxes
+New Level skyboxes
 
 Level Music
 
@@ -71,4 +70,4 @@ Sound Effects
 
 --------------------------------------------------------------------------------------------
 WEBSITE = 7/10 = 70% Complete
-GAME = 3/20 =  15% Complete
+GAME = 3/20 =  20% Complete
