@@ -25,6 +25,8 @@ Basic Game Demo (clunky movment and can't move while jump & box-only collision)
 
 Improved Movement & Physics
 
+Game UI
+
 --------------------------------------------------------------------------------------------
 TO DO (WEBSITE): 
 
@@ -36,7 +38,6 @@ Improve website aesthetics
 
 TO DO (GAME):
 
-Game UI
 
 Actual Level Design
 
@@ -70,4 +71,4 @@ Sound Effects
 
 --------------------------------------------------------------------------------------------
 WEBSITE = 7/10 = 70% Complete
-GAME = 3/20 =  20% Complete
+GAME = 4/20 =  25% Complete
