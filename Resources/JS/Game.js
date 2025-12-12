@@ -15,12 +15,10 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
 
 document.body.appendChild( renderer.domElement ); // add the renderer to the HTML
 
-let model = null; // Declare model globally
-let groundBox = null;
-let groundBox1 = null;
-let groundBox2 = null;
-let groundBox3 = null;
-let groundBox4 = null;
+// GAME STATE
+let gamePaused = false;
+
+let CurrentLevel = 1;
 
 const grounds = [];
 
@@ -35,6 +33,57 @@ const material5 = new THREE.MeshPhongMaterial // Material that can simulate shin
     
 } );
 
+
+const loader = new GLTFLoader();
+
+function loadLevel(path) 
+{
+    loader.load(path, (gltf) => 
+    {
+        const model = gltf.scene;
+        model.traverse((child) => 
+        {
+            if (child.isMesh)
+                { 
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+        });
+        scene.add(model);
+        grounds.push(new THREE.Box3().setFromObject(model));
+    });
+}
+
+switch (CurrentLevel)
+{
+
+    case 0:
+        loadLevel("Resources/Models/TestLevel/TestLevel.glb");
+        loadLevel("Resources/Models/TestLevel/TestLevel_01.glb");
+        loadLevel("Resources/Models/TestLevel/TestLevel_02.glb");
+        loadLevel("Resources/Models/TestLevel/TestLevel_03.glb");
+        loadLevel("Resources/Models/TestLevel/TestLevel_04.glb");
+        break;
+
+    case 1:
+        loadLevel("Resources/Models/Level1/Level1_01.glb");
+        loadLevel("Resources/Models/Level1/Level1_02.glb");
+        loadLevel("Resources/Models/Level1/Level1_03.glb");
+        loadLevel("Resources/Models/Level1/Level1_04.glb");
+        loadLevel("Resources/Models/Level1/Level1_05.glb");
+        loadLevel("Resources/Models/Level1/Level1_06.glb");
+        loadLevel("Resources/Models/Level1/Level1_07.glb");
+        loadLevel("Resources/Models/Level1/Level1_08.glb");
+        loadLevel("Resources/Models/Level1/Level1_09.glb");
+        loadLevel("Resources/Models/Level1/Level1_10.glb");
+        loadLevel("Resources/Models/Level1/Level1_11.glb");
+        loadLevel("Resources/Models/Level1/Level1_12.glb");
+        break;
+
+}
+
+
+
 //const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 const CapsuleGeometry = new THREE.CapsuleGeometry( 1, 1, 4, 8, 1 );
 const Player = new THREE.Mesh( CapsuleGeometry, material5 ); // Create cube object and set material
@@ -42,96 +91,9 @@ Player.receiveShadow = true;
 Player.castShadow = true;
 scene.add(Player);
 Player.position.x = 0;
-Player.position.y = 4;
+Player.position.y = 15;
 Player.position.z = 15;
 CapsuleGeometry.scale(1, 1, 1); // scale the sphere
-
-
-const loader = new GLTFLoader();// Create a GLTFLoader instance
-loader.load // Load the GLTF model
-(
-    'Resources/Models/TestLevel/TestLevel.glb', // Path to the GLTF file
-    (gltf) => 
-    {
-        model = gltf.scene;
-        model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) 
-        {
-            child.receiveShadow = true;
-            
-        }});
-        scene.add(model); // Add the loaded scene to your Three.js scene
-        grounds.push(new THREE.Box3().setFromObject(model));
-    },
-);
-
-loader.load // Load the GLTF model
-(
-    'Resources/Models/TestLevel/TestLevel_01.glb', // Path to the GLTF file
-    (gltf) => 
-    {
-        model = gltf.scene;
-        model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) 
-        {
-            child.receiveShadow = true;
-            child.castShadow = true;
-        }});
-        scene.add(model); // Add the loaded scene to your Three.js scene
-        grounds.push(new THREE.Box3().setFromObject(model));
-    },
-);
-
-loader.load // Load the GLTF model
-(
-    'Resources/Models/TestLevel/TestLevel_02.glb', // Path to the GLTF file
-    (gltf) => 
-    {
-        model = gltf.scene;
-        model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) 
-        {
-            child.receiveShadow = true;
-            child.castShadow = true;
-        }});
-        scene.add(model); // Add the loaded scene to your Three.js scene
-        grounds.push(new THREE.Box3().setFromObject(model));
-    },
-);
-
-loader.load // Load the GLTF model
-(
-    'Resources/Models/TestLevel/TestLevel_03.glb', // Path to the GLTF file
-    (gltf) => 
-    {
-        model = gltf.scene;
-        model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) 
-        {
-            child.receiveShadow = true;
-            child.castShadow = true;
-        }});
-        scene.add(model); // Add the loaded scene to your Three.js scene
-        grounds.push(new THREE.Box3().setFromObject(model));
-    },
-);
-
-loader.load // Load the GLTF model
-(
-    'Resources/Models/TestLevel/TestLevel_04.glb', // Path to the GLTF file
-    (gltf) => 
-    {
-        model = gltf.scene;
-        model.traverse((child) => { //Shadow Fix
-        if (child.isMesh) 
-        {
-            child.receiveShadow = true;
-            child.castShadow = true;
-        }});
-        scene.add(model); // Add the loaded scene to your Three.js scene
-        grounds.push(new THREE.Box3().setFromObject(model));
-    },
-);
 
 const Light = new THREE.DirectionalLight( 0xffffff, 3 ); // soft white light// White directional light at half intensity shining from the top.
 Light.position.set(20, 40, 20);
@@ -159,7 +121,7 @@ Light.shadow.camera.far = 200;
 
 const gravity = -0.02; // Gravity speed
 const Speed = 0.25;
-const JumpForce = 0.5;
+const JumpForce = 0.75;
 
 let velocityY = 0;     // Vertical speed
 let velocityX = 0;     // Horizontal speed
@@ -172,12 +134,15 @@ function animate()  // Animation Function
     if (!gamePaused) 
     {
         Player.position.x += velocityX;
+        camera.position.x += velocityX;
 
         Player.position.z += velocityZ;
+        camera.position.z += velocityZ;
 
         // Apply gravity
         velocityY += gravity;
         Player.position.y += velocityY;
+        camera.position.y = (8 + Player.position.y);
 
         // Compute player bounding box
         const playerBox = new THREE.Box3().setFromObject(Player);
@@ -357,6 +322,8 @@ function onWindowresize() // function to resize when when changed
 
 window.addEventListener("resize", onWindowresize); // to activate function window size is changed
 
+   let SkyTex;
+
 const createskybox = () => // Skybox function
 {
 
@@ -365,7 +332,7 @@ const createskybox = () => // Skybox function
     const loader = new THREE.TextureLoader();
     loader.load
     (
-        'Resources/Images/skybox.jpg', 
+        SkyTex, 
         function(texture)
         {
             // create sphere
@@ -379,7 +346,7 @@ const createskybox = () => // Skybox function
             } );
 
             // scale the sphere
-            sphereGeometry.scale(-1, 1, 1);
+            sphereGeometry.scale(-5, 5, 5);
             
             bgMesh = new THREE.Mesh(sphereGeometry, SphereMaterial);
             scene.add(bgMesh)
@@ -388,6 +355,17 @@ const createskybox = () => // Skybox function
     );
 
 }
+
+    switch (CurrentLevel)
+    {
+        case 0:
+            SkyTex = "Resources/Images/skybox.jpg";
+            break;
+
+        case 1:
+            SkyTex = "Resources/Images/mossy_forest_2k.png";
+            break;
+    }
 
 createskybox();
 
@@ -398,9 +376,6 @@ const pauseMenu = document.getElementById("pause-menu");
 const pauseBtn = document.getElementById("pause-btn");
 const resumeBtn = document.getElementById("resume-btn");
 const quitBtn = document.getElementById("quit-btn");
-
-// GAME STATE
-let gamePaused = false;
 
 // Pause the game
 pauseBtn.addEventListener("click", () => {
