@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width">
 
         <title>
-            Test Level
+            3D Platformer
         </title>
 
         <link rel="stylesheet" href="Resources/CSS/Game.css">
@@ -15,6 +15,39 @@
     </head>
     
     <body>
+    <!-- IN-GAME UI -->
+
+    <div id="game-ui" class="ui-panel">
+        <div id="health">
+            <img src="./Resources\Images\UI\HEALTH.png" alt="FirstThreeJS" style="width:174px; height:35px;">
+            100
+        </div>
+
+        <div id="score">
+            <img src="./Resources\Images\UI\SCORE.png" alt="FirstThreeJS" style="width:151px; height:36px;">
+            0
+        </div>
+
+        <button id="pause-btn">
+            <img src="./Resources\Images\UI\PAUSE.png" alt="FirstThreeJS" style="width:149px; height:35px;">
+        </button>
+    </div>
+
+    <!-- PAUSE MENU -->
+    <div id="pause-menu" class="ui-panel hidden">
+
+        <img src="./Resources\Images\UI\PAUSED.png" alt="FirstThreeJS" style="width:509px; height:125px;">
+
+        <button id="resume-btn">
+            <img src="./Resources\Images\UI\RESUME.png" alt="FirstThreeJS" style="width:251px; height:62px;">
+        </button>
+
+        <button id="quit-btn">
+            <img src="./Resources\Images\UI\QUIT TO TITLE.png" alt="FirstThreeJS" style="width:367px; height:71px;">
+        </button>
+        
+    </div>
+
         <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"> </script>
 
         <script type="importmap"> 

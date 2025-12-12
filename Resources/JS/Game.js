@@ -42,7 +42,7 @@ Player.receiveShadow = true;
 Player.castShadow = true;
 scene.add(Player);
 Player.position.x = 0;
-Player.position.y = 3.35;
+Player.position.y = 4;
 Player.position.z = 15;
 CapsuleGeometry.scale(1, 1, 1); // scale the sphere
 
@@ -169,52 +169,58 @@ let canJump; // Can the player Jump?
 
 function animate()  // Animation Function
 {
-    Player.position.x += velocityX;
-
-    Player.position.z += velocityZ;
-
-    // Apply gravity
-    velocityY += gravity;
-    Player.position.y += velocityY;
-
-    // Compute player bounding box
-    const playerBox = new THREE.Box3().setFromObject(Player);
-
-    canJump = false;
-    
-    // if (groundBox) {
-
-    //     // Check collision
-    //    // if (playerBox.min.y <= groundBox.max.y) {
-    //     if (playerBox.intersectsBox(groundBox)) {
-    //         // COLLIDED WITH GROUND
-    //         Player.position.y = 0.35 +  groundBox.max.y + (Player.geometry.parameters.radiusTop || 1);
-    //         velocityY = 0; // Stop falling
-    //         canJump = true;
-    //     }
-    //     else
-    //     {
-    //         canJump = false;
-    //     }
-    // }
-
-for (const ground of grounds) {
-    if (playerBox.intersectsBox(ground)) 
+    if (!gamePaused) 
     {
-        const result = resolveCollision(playerBox, ground, Player);
+        Player.position.x += velocityX;
 
-        if (result === "ground") 
+        Player.position.z += velocityZ;
+
+        // Apply gravity
+        velocityY += gravity;
+        Player.position.y += velocityY;
+
+        // Compute player bounding box
+        const playerBox = new THREE.Box3().setFromObject(Player);
+
+        canJump = false;
+        
+        // if (groundBox) {
+
+        //     // Check collision
+        //    // if (playerBox.min.y <= groundBox.max.y) {
+        //     if (playerBox.intersectsBox(groundBox)) {
+        //         // COLLIDED WITH GROUND
+        //         Player.position.y = 0.35 +  groundBox.max.y + (Player.geometry.parameters.radiusTop || 1);
+        //         velocityY = 0; // Stop falling
+        //         canJump = true;
+        //     }
+        //     else
+        //     {
+        //         canJump = false;
+        //     }
+        // }
+
+        for (const ground of grounds) 
         {
-            canJump = true;
+            if (playerBox.intersectsBox(ground)) 
+            {
+                const result = resolveCollision(playerBox, ground, Player);
+
+                if (result === "ground") 
+                {
+                    canJump = true;
+                }
+
+                // Recalculate playerBox after moving
+                playerBox.setFromObject(Player);
+            }
+            
         }
 
-        // Recalculate playerBox after moving
-        playerBox.setFromObject(Player);
+        renderer.render(scene, camera);
+        return;
     }
-    
-}
 
-    renderer.render( scene, camera ); // Render Scene
 }
 
 function resolveCollision(playerBox, ground, player) {
@@ -384,3 +390,31 @@ const createskybox = () => // Skybox function
 }
 
 createskybox();
+
+// UI ELEMENTS
+const gameUI = document.getElementById("game-ui");
+const pauseMenu = document.getElementById("pause-menu");
+
+const pauseBtn = document.getElementById("pause-btn");
+const resumeBtn = document.getElementById("resume-btn");
+const quitBtn = document.getElementById("quit-btn");
+
+// GAME STATE
+let gamePaused = false;
+
+// Pause the game
+pauseBtn.addEventListener("click", () => {
+    gamePaused = true;
+    pauseMenu.classList.remove("hidden");
+});
+
+// Resume
+resumeBtn.addEventListener("click", () => {
+    gamePaused = false;
+    pauseMenu.classList.add("hidden");
+});
+
+// Quit → reload the page
+quitBtn.addEventListener("click", () => {
+    location.reload();
+});
