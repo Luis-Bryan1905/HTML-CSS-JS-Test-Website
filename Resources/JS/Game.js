@@ -1,5 +1,12 @@
 import * as THREE from "three"; // Import Three.js
 import { GLTFLoader } from "https://unpkg.com/three@0.169.0/examples/jsm/loaders/GLTFLoader.js";
+import Stats from 'https://unpkg.com/three@0.169.0/examples/jsm/libs/stats.module.js';
+
+let stats; //create stats
+
+stats = new Stats(); // Declare a new Stats object 
+
+//document.body.appendChild( stats.dom ); // add the Stats object to the canvas
 
 const scene = new THREE.Scene(); // Initialise 3D scene
 
@@ -18,6 +25,8 @@ document.body.appendChild( renderer.domElement ); // add the renderer to the HTM
 // GAME STATE
 let gamePaused = false;
 
+let DebugStat = false;
+ 
 let CurrentLevel = 1;
 
 const grounds = [];
@@ -82,7 +91,24 @@ switch (CurrentLevel)
 
 }
 
+const torusGeometry = new THREE.TorusGeometry( 1.5, 0.3, 16, 116 ); 
+const torus  = new THREE.Mesh( torusGeometry, material5 ); // Create torus object and set material
+torus.castShadow = true;
+torus.receiveShadow = true;
+scene.add( torus ); // Add torus  to scene
+let TorusAnimationSpeed = 0.05; // Torus animation speed
+switch (CurrentLevel)
+{
+    case 0:
+        break;
 
+    case 1:
+        torus.position.x = 45;
+        torus.position.z = -30;
+        torus.position.y = 51;
+
+        break;
+}
 
 //const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 const CapsuleGeometry = new THREE.CapsuleGeometry( 1, 1, 4, 8, 1 );
@@ -91,7 +117,7 @@ Player.receiveShadow = true;
 Player.castShadow = true;
 scene.add(Player);
 Player.position.x = 0;
-Player.position.y = 15;
+Player.position.y = 55;
 Player.position.z = 15;
 CapsuleGeometry.scale(1, 1, 1); // scale the sphere
 
@@ -100,16 +126,16 @@ Light.position.set(20, 40, 20);
 Light.target.position.set(0, 0, 0);Light.castShadow = true;
 scene.add( Light ); // Add directional light to scene
 
-camera.position.z = 42; // Camera Distance
-camera.position.y = 15;
+const cameraZ = 25; // Camera Distance
+const cameraY = 8;
 camera.rotation.x = -0.27
 
 
 // shadow settings
-let shadow = 25;
+let shadow = 55;
 Light.shadow.mapSize.set(2048, 2048);
 Light.shadow.bias = -0.0001; // Small negative bias to reduce acne
-Light.shadow.normalBias = 0.02; // Helps with peter-panning
+Light.shadow.normalBias = 0.01; // Helps with peter-panning
 
 Light.shadow.camera.left = -shadow;
 Light.shadow.camera.right = shadow;
@@ -117,7 +143,7 @@ Light.shadow.camera.top = shadow;
 Light.shadow.camera.bottom = -shadow;
 
 Light.shadow.camera.near = 1;
-Light.shadow.camera.far = 200;
+Light.shadow.camera.far = 500;
 
 const gravity = -0.02; // Gravity speed
 const Speed = 0.25;
@@ -129,23 +155,34 @@ let velocityZ = 0;     // Forwrds and Backwards speed
 
 let canJump; // Can the player Jump?
 
+
+
 function animate()  // Animation Function
 {
+    stats.update(); //Update the stats inside the animation loop
+
     if (!gamePaused) 
     {
         Player.position.x += velocityX;
-        camera.position.x += velocityX;
 
-        Player.position.z += velocityZ;
-        camera.position.z += velocityZ;
+        Player.position.z += velocityZ ;
+        
+        if (Player.position.y <= -15)
+        {
+            location.reload();
+        }
+
+        torus.rotation.y += TorusAnimationSpeed; // rotate torus
 
         // Apply gravity
         velocityY += gravity;
         Player.position.y += velocityY;
-        camera.position.y = (8 + Player.position.y);
+        
 
         // Compute player bounding box
         const playerBox = new THREE.Box3().setFromObject(Player);
+
+        const TorusBox = new THREE.Box3().setFromObject(torus);
 
         canJump = false;
         
@@ -167,7 +204,7 @@ function animate()  // Animation Function
 
         for (const ground of grounds) 
         {
-            if (playerBox.intersectsBox(ground)) 
+            if (playerBox.intersectsBox(ground)) //if player interects ground
             {
                 const result = resolveCollision(playerBox, ground, Player);
 
@@ -182,6 +219,16 @@ function animate()  // Animation Function
             
         }
 
+        if (playerBox.intersectsBox(TorusBox)) //if player interects ground
+        {
+            gamePaused = true;
+            finishMenu.classList.remove("hidden");
+        }
+
+        camera.position.x =  Player.position.x;
+        camera.position.z = Player.position.z + cameraZ;
+        camera.position.y = (cameraY + Player.position.y);
+        
         renderer.render(scene, camera);
         return;
     }
@@ -210,31 +257,47 @@ function resolveCollision(playerBox, ground, player) {
 
     if (minAxis === overlap.y) {
         // vertical collision
-        if (player.position.y > ground.max.y) {
-            player.position.y += overlap.y; // push up
+        if (player.position.y > ground.max.y) 
+            {
+            player.position.y += overlap.y ; // push up
             velocityY = 0;
             return "ground";
-        } else {
-            player.position.y -= overlap.y; // hit ceiling
-            velocityY = Math.min(velocityY, 0);
+        } 
+        else 
+        {
+            player.position.y -= overlap.y ; // hit ceiling
+            velocityY = Math.min(velocityY, 0) ;
             return "ceiling";
         }
     }
 
     if (minAxis === overlap.x) {
         // horizontal X collision
-        if (player.position.x > ground.max.x) player.position.x += overlap.x;
-        else player.position.x -= overlap.x;
-        velocityX = 0;
-        return "wall";
+        if (player.position.x > ground.max.x) 
+        {
+            player.position.x += overlap.x ;
+
+        }
+        else 
+        {
+            player.position.x -= overlap.x ;
+            velocityX = 0;
+            return "wall";
+        }
     }
 
     if (minAxis === overlap.z) {
         // horizontal Z collision
-        if (player.position.z > ground.max.z) player.position.z += overlap.z;
-        else player.position.z -= overlap.z;
-        velocityZ = 0;
-        return "wall";
+        if (player.position.z > ground.max.z) 
+        {
+                player.position.z += overlap.z ;
+        }
+        else 
+        {
+            player.position.z -= overlap.z ;
+            velocityZ = 0;
+            return "wall";
+        }
     }
 }
 
@@ -246,29 +309,29 @@ window.addEventListener("keydown", (event) =>
         {
             case "KeyA":
                 console.log("KeyA")
-                velocityX = -Math.abs(Speed);
+                velocityX = -Math.abs(Speed) ;
                 break
 
             case "KeyD":
                 console.log("KeyD")
-                velocityX = Speed;
+                velocityX = Speed ;
                 break
 
             case "KeyW":
                 console.log("KeyW")
-                velocityZ = -Math.abs(Speed);
+                velocityZ = -Math.abs(Speed) ;
                 break
     
             case "KeyS":
                 console.log("KeyS")
-                velocityZ = Speed;
+                velocityZ = Speed ;
                 break
 
             case "KeyL":
                 console.log("KeyL")
                 if (canJump)
                 {
-                velocityY = JumpForce;
+                velocityY = JumpForce ;
                 }
                 break
             
@@ -326,7 +389,6 @@ window.addEventListener("resize", onWindowresize); // to activate function windo
 
 const createskybox = () => // Skybox function
 {
-
     let bgMesh;
 
     const loader = new THREE.TextureLoader();
@@ -350,12 +412,9 @@ const createskybox = () => // Skybox function
             
             bgMesh = new THREE.Mesh(sphereGeometry, SphereMaterial);
             scene.add(bgMesh)
-            
         } 
     );
-
 }
-
     switch (CurrentLevel)
     {
         case 0:
@@ -369,13 +428,15 @@ const createskybox = () => // Skybox function
 
 createskybox();
 
+
 // UI ELEMENTS
 const gameUI = document.getElementById("game-ui");
 const pauseMenu = document.getElementById("pause-menu");
+const finishMenu = document.getElementById("finish-menu");
 
 const pauseBtn = document.getElementById("pause-btn");
 const resumeBtn = document.getElementById("resume-btn");
-const quitBtn = document.getElementById("quit-btn");
+const restartbtn = document.getElementById("restart-btn");
 
 // Pause the game
 pauseBtn.addEventListener("click", () => {
@@ -390,6 +451,6 @@ resumeBtn.addEventListener("click", () => {
 });
 
 // Quit → reload the page
-quitBtn.addEventListener("click", () => {
+restartbtn.addEventListener("click", () => {
     location.reload();
 });
