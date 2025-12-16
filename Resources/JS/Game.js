@@ -27,9 +27,12 @@ let gamePaused = false;
 
 let DebugStat = false;
  
-let CurrentLevel = 1;
+let CurrentLevel = 2;
 
 const grounds = [];
+
+const uvAnimatedTextures = [];
+let uvAnimationSpeed = 0.02;
 
 const material5 = new THREE.MeshPhongMaterial // Material that can simulate shiny surfaces with specular highlights
 ( { 
@@ -45,7 +48,7 @@ const material5 = new THREE.MeshPhongMaterial // Material that can simulate shin
 
 const loader = new GLTFLoader();
 
-function loadLevel(path) 
+function loadLevel(path, CollisionType, uvANIM) 
 {
     loader.load(path, (gltf) => 
     {
@@ -56,10 +59,40 @@ function loadLevel(path)
                 { 
                     child.castShadow = true;
                     child.receiveShadow = true;
+
+                    const tex = child.material.map;
+
+                    tex.wrapS = THREE.RepeatWrapping;
+                    tex.wrapT = THREE.RepeatWrapping;
+
+                    switch(uvANIM)
+                    {
+                        case 0: // 0 = no animation
+                            break;
+
+                        case 1: // 1 = scroll X
+                            collectUvMaps(child.material, uvANIM);
+                            break;
+
+                        case 2: // 2 = scroll Y
+                            collectUvMaps(child.material, uvANIM);
+                            break;
+                    }
                 }
         });
         scene.add(model);
-        grounds.push(new THREE.Box3().setFromObject(model));
+
+
+
+        switch(CollisionType)
+        {
+            case 0:
+                break;
+
+            case 1:
+                grounds.push(new THREE.Box3().setFromObject(model));
+                break;
+        }
     });
 }
 
@@ -67,31 +100,87 @@ switch (CurrentLevel)
 {
 
     case 0:
-        loadLevel("Resources/Models/TestLevel/TestLevel.glb");
-        loadLevel("Resources/Models/TestLevel/TestLevel_01.glb");
-        loadLevel("Resources/Models/TestLevel/TestLevel_02.glb");
-        loadLevel("Resources/Models/TestLevel/TestLevel_03.glb");
-        loadLevel("Resources/Models/TestLevel/TestLevel_04.glb");
+        loadLevel("Resources/Models/TestLevel/TestLevel.glb", 1, 0);
+        loadLevel("Resources/Models/TestLevel/TestLevel_01.glb", 1, 0);
+        loadLevel("Resources/Models/TestLevel/TestLevel_02.glb", 1, 0);
+        loadLevel("Resources/Models/TestLevel/TestLevel_03.glb", 1, 0);
+        loadLevel("Resources/Models/TestLevel/TestLevel_04.glb", 1, 0);
         break;
 
     case 1:
-        loadLevel("Resources/Models/Level1/Level1_01.glb");
-        loadLevel("Resources/Models/Level1/Level1_02.glb");
-        loadLevel("Resources/Models/Level1/Level1_03.glb");
-        loadLevel("Resources/Models/Level1/Level1_04.glb");
-        loadLevel("Resources/Models/Level1/Level1_05.glb");
-        loadLevel("Resources/Models/Level1/Level1_06.glb");
-        loadLevel("Resources/Models/Level1/Level1_07.glb");
-        loadLevel("Resources/Models/Level1/Level1_08.glb");
-        loadLevel("Resources/Models/Level1/Level1_09.glb");
-        loadLevel("Resources/Models/Level1/Level1_10.glb");
-        loadLevel("Resources/Models/Level1/Level1_11.glb");
-        loadLevel("Resources/Models/Level1/Level1_12.glb");
+        loadLevel("Resources/Models/Level1/Level1_01.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_02.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_03.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_04.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_05.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_06.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_07.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_08.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_09.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_10.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_11.glb", 1, 0);
+        loadLevel("Resources/Models/Level1/Level1_12.glb", 1, 0);
+        break;
+
+    case 2:
+        loadLevel("Resources/Models/Level2/Level2_01.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_02.glb", 0, 2);
+        loadLevel("Resources/Models/Level2/Level2_03.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_04.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_05.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_06.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_07.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_08.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_09.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_10.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_11.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_12.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_13.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_14.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_15.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_16.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_17.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_18.glb", 1, 0);
+        loadLevel("Resources/Models/Level2/Level2_19.glb", 0, 2);
+        loadLevel("Resources/Models/Level2/Level2_20.glb", 0, 2);
+        loadLevel("Resources/Models/Level2/Level2_21.glb", 0, 0);
+        loadLevel("Resources/Models/Level2/Level2_22.glb", 0, 0);
+        loadLevel("Resources/Models/Level2/Level2_23.glb", 0, 0);
+
+        break;
+
+    default:
+        loadLevel("Resources/Models/TestLevel/TestLevel.glb", 1);
         break;
 
 }
 
-const torusGeometry = new THREE.TorusGeometry( 1.5, 0.3, 16, 116 ); 
+function collectUvMaps(material, uvANIM)
+{
+    const maps = [
+        material.map,
+        material.normalMap,
+        material.roughnessMap,
+        material.metalnessMap,
+        material.specularMap
+    ];
+
+    for (const tex of maps)
+    {
+        if (!tex) continue;
+
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+
+        uvAnimatedTextures.push({
+            texture: tex,
+            mode: uvANIM,
+            speed: 0.002
+        });
+    }
+}
+
+const torusGeometry = new THREE.TorusGeometry( 2, 0.3, 16, 116 ); 
 const torus  = new THREE.Mesh( torusGeometry, material5 ); // Create torus object and set material
 torus.castShadow = true;
 torus.receiveShadow = true;
@@ -106,7 +195,12 @@ switch (CurrentLevel)
         torus.position.x = 45;
         torus.position.z = -30;
         torus.position.y = 51;
+        break;
 
+    case 2:
+        torus.position.x = 0;
+        torus.position.z = -270;
+        torus.position.y = 18;
         break;
 }
 
@@ -142,12 +236,12 @@ Light.shadow.camera.right = shadow;
 Light.shadow.camera.top = shadow;
 Light.shadow.camera.bottom = -shadow;
 
-Light.shadow.camera.near = 1;
-Light.shadow.camera.far = 500;
+Light.shadow.camera.near = 0.1;
+Light.shadow.camera.far = 50000;
 
-const gravity = -0.02; // Gravity speed
-const Speed = 0.25;
-const JumpForce = 0.75;
+const gravity = -0.03; // Gravity speed
+const Speed = 0.35;
+const JumpForce = 0.85;
 
 let velocityY = 0;     // Vertical speed
 let velocityX = 0;     // Horizontal speed
@@ -167,7 +261,7 @@ function animate()  // Animation Function
 
         Player.position.z += velocityZ ;
         
-        if (Player.position.y <= -15)
+        if (Player.position.y <= -20)
         {
             location.reload();
         }
@@ -229,6 +323,18 @@ function animate()  // Animation Function
         camera.position.z = Player.position.z + cameraZ;
         camera.position.y = (cameraY + Player.position.y);
         
+        for (const uv of uvAnimatedTextures)
+        {
+            if (uv.mode === 1) 
+            {
+                uv.texture.offset.x += uv.speed; // scroll X
+            }
+            else if (uv.mode === 2) 
+            {
+                uv.texture.offset.y += uv.speed; // scroll Y
+            }
+        }
+
         renderer.render(scene, camera);
         return;
     }
@@ -408,7 +514,7 @@ const createskybox = () => // Skybox function
             } );
 
             // scale the sphere
-            sphereGeometry.scale(-5, 5, 5);
+            sphereGeometry.scale(-15, 15, 11);
             
             bgMesh = new THREE.Mesh(sphereGeometry, SphereMaterial);
             scene.add(bgMesh)
@@ -423,6 +529,10 @@ const createskybox = () => // Skybox function
 
         case 1:
             SkyTex = "Resources/Images/mossy_forest_2k.png";
+            break;
+
+        case 2:
+            SkyTex = "Resources/Images/goegap_2k.png";
             break;
     }
 

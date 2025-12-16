@@ -22,5 +22,8 @@ Background Music is referenced from https://freesound.org/people/frankum/sounds/
 Sega Mega Drive model downloaded from https://sketchfab.com/3d-models/sega-mega-drive-47cf3eae9fc3423db22aba119a6a37d5
 UI Fonts: OZONE Logo Generator https://cooltext.com/Logo-Design-OZONE & Supernova Logo Generator https://cooltext.com/Logo-Design-Supernova
 
+Textures Taken from https://ambientcg.com/
+
 Skybox:
 Forest - https://polyhaven.com/a/mossy_forest
+Desert - https://polyhaven.com/a/goegap
