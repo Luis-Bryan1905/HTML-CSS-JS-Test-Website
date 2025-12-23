@@ -516,7 +516,7 @@ const createskybox = () => // Skybox function
                 map:texture,
                 side: THREE.DoubleSide
             } );
-w
+
             // scale the sphere
             sphereGeometry.scale(-25, 25, 22);
             
