@@ -31,6 +31,10 @@ let CurrentLevel = 2;
 
 const grounds = [];
 
+let FpsMode = 144;
+let Delta = 60 / FpsMode;
+
+
 const uvAnimatedTextures = [];
 let uvAnimationSpeed = 0.02;
 
@@ -175,7 +179,7 @@ function collectUvMaps(material, uvANIM)
         uvAnimatedTextures.push({
             texture: tex,
             mode: uvANIM,
-            speed: 0.002
+            speed: 0.002 * Delta
         });
     }
 }
@@ -185,7 +189,7 @@ const torus  = new THREE.Mesh( torusGeometry, material5 ); // Create torus objec
 torus.castShadow = true;
 torus.receiveShadow = true;
 scene.add( torus ); // Add torus  to scene
-let TorusAnimationSpeed = 0.05; // Torus animation speed
+let TorusAnimationSpeed = 0.05 * Delta; // Torus animation speed
 switch (CurrentLevel)
 {
     case 0:
@@ -257,9 +261,9 @@ function animate()  // Animation Function
 
     if (!gamePaused) 
     {
-        Player.position.x += velocityX;
+        Player.position.x += velocityX  * Delta;;
 
-        Player.position.z += velocityZ ;
+        Player.position.z += velocityZ * Delta;
         
         if (Player.position.y <= -20)
         {
@@ -269,8 +273,8 @@ function animate()  // Animation Function
         torus.rotation.y += TorusAnimationSpeed; // rotate torus
 
         // Apply gravity
-        velocityY += gravity;
-        Player.position.y += velocityY;
+        velocityY += gravity * Delta;
+        Player.position.y += velocityY * Delta;
         
 
         // Compute player bounding box
@@ -512,9 +516,9 @@ const createskybox = () => // Skybox function
                 map:texture,
                 side: THREE.DoubleSide
             } );
-
+w
             // scale the sphere
-            sphereGeometry.scale(-15, 15, 11);
+            sphereGeometry.scale(-25, 25, 22);
             
             bgMesh = new THREE.Mesh(sphereGeometry, SphereMaterial);
             scene.add(bgMesh)
@@ -532,7 +536,11 @@ const createskybox = () => // Skybox function
             break;
 
         case 2:
-            SkyTex = "Resources/Images/goegap_2k.png";
+            SkyTex = "Resources/Images/goegap_2k.png"; 
+            break;
+
+         case 3:
+            SkyTex = "Resources/Images/Nebula N0.png";
             break;
     }
 
