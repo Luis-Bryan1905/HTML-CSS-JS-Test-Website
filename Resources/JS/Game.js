@@ -34,19 +34,51 @@ const grounds = [];
 let FpsMode = 144;
 let Delta = 60 / FpsMode;
 
+let SkyTex;
+
+switch (CurrentLevel)
+{
+    case 0:
+        SkyTex = "Resources/Images/skybox.jpg";
+        break;
+
+    case 1:
+        SkyTex = "Resources/Images/mossy_forest_2k.png";
+        break;
+
+    case 2:
+        SkyTex = "Resources/Images/goegap_2k.png"; 
+        break;
+
+     case 3:
+        SkyTex = "Resources/Images/Nebula N0.png";
+        break;
+}
 
 const uvAnimatedTextures = [];
 let uvAnimationSpeed = 0.02;
 
+const envLoader = new THREE.TextureLoader();
+
+const environmentMap = envLoader.load(SkyTex, (tex) => //Convert Sky Texture to Enviroment Map
+{
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    tex.colorSpace = THREE.SRGBColorSpace;
+});
+
 const material5 = new THREE.MeshPhongMaterial // Material that can simulate shiny surfaces with specular highlights
 ( { 
+    
     color: 0xfcc200  , // Base Colour
     specular: 0xffffff, //Specular colour
     shininess: 100, // How shiny the material is
     emissive: 0x422c00, // Emissive colour
-    reflectivity: 1, // How much the environment map affects the surface
-    refractionRatio: 1, // Index of refraction (IOR)
-    
+
+    envMap: environmentMap,        // reflection source
+    reflectivity: 0.5, // reflection strength
+    refractionRatio: 1.0,
+    needsUpdate: true
+
 } );
 
 
@@ -56,11 +88,24 @@ function loadLevel(path, CollisionType, uvANIM)
 {
     loader.load(path, (gltf) => 
     {
+
+        const envLoader = new THREE.TextureLoader();
+
+        const environmentMap = envLoader.load(SkyTex, (tex) => //Convert Sky Texture to Enviroment Map
+        {
+            tex.mapping = THREE.EquirectangularReflectionMapping;
+            tex.colorSpace = THREE.SRGBColorSpace;
+        });
+
         const model = gltf.scene;
         model.traverse((child) => 
         {
             if (child.isMesh)
                 { 
+                    child.material.envMap = environmentMap; //Enviroment Map
+                    child.material.envMapIntensity = 1; // Enviroment Map strength
+                    child.material.needsUpdate = true;
+
                     child.castShadow = true;
                     child.receiveShadow = true;
 
@@ -190,15 +235,19 @@ torus.castShadow = true;
 torus.receiveShadow = true;
 scene.add( torus ); // Add torus  to scene
 let TorusAnimationSpeed = 0.05 * Delta; // Torus animation speed
-switch (CurrentLevel)
+
+switch (CurrentLevel) // level goal placements
 {
     case 0:
+        torus.position.x = 15;
+        torus.position.z = 0;
+        torus.position.y = 5;
         break;
 
     case 1:
         torus.position.x = 45;
         torus.position.z = -30;
-        torus.position.y = 51;
+        torus.position.y = 52;
         break;
 
     case 2:
@@ -208,12 +257,69 @@ switch (CurrentLevel)
         break;
 }
 
-//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const CapsuleGeometry = new THREE.CapsuleGeometry( 1, 1, 4, 8, 1 );
-const Player = new THREE.Mesh( CapsuleGeometry, material5 ); // Create cube object and set material
-Player.receiveShadow = true;
-Player.castShadow = true;
+const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+
+const CapsuleGeometry = new THREE.CapsuleGeometry( 0.0001, 0.0001, 4, 8, 1 );
+const Player = new THREE.Mesh(CapsuleGeometry, material5);
+const PlayerCollison = new THREE.Mesh(CapsuleGeometry, material5);
 scene.add(Player);
+const PlayerReflectivity = 0.5;
+const PlayerModel = new THREE.Group();
+Player.add(PlayerModel);
+
+loader.load('Resources/Models/Player.glb', (gltf) => {
+
+    const envLoader = new THREE.TextureLoader();
+
+    const environmentMap = envLoader.load(SkyTex, (tex) => //Convert Sky Texture to Enviroment Map
+    {
+        tex.mapping = THREE.EquirectangularReflectionMapping;
+        tex.colorSpace = THREE.SRGBColorSpace;
+    });
+
+    const model = gltf.scene;
+
+    model.scale.set(1, 1, 1);
+    model.position.set(0, -1, 0);
+
+    model.traverse((child) => {
+        if (child.isMesh) 
+        {
+            child.material.envMap = environmentMap; //Enviroment Map
+            child.material.envMapIntensity = PlayerReflectivity; // Enviroment Map strength
+            child.material.needsUpdate = true;
+
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
+
+    PlayerModel.add(model);
+});
+
+let WheelModel = null;
+
+loader.load('Resources/Models/PlayerWheel.glb', (gltf) => {
+
+    WheelModel = gltf.scene;
+
+    WheelModel.scale.set(1, 1, 1);
+    WheelModel.position.set(0, -1, 0);
+
+    WheelModel.traverse((child) => {
+        if (child.isMesh) {
+            child.material.envMap = environmentMap;
+            child.material.envMapIntensity = PlayerReflectivity;
+            child.material.needsUpdate = true;
+
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
+
+    PlayerModel.add(WheelModel);
+});
+
 Player.position.x = 0;
 Player.position.y = 55;
 Player.position.z = 15;
@@ -254,17 +360,22 @@ let velocityZ = 0;     // Forwrds and Backwards speed
 let canJump; // Can the player Jump?
 
 
-
 function animate()  // Animation Function
 {
     stats.update(); //Update the stats inside the animation loop
 
     if (!gamePaused) 
     {
-        Player.position.x += velocityX  * Delta;;
+
+        Player.position.x += velocityX  * Delta;
 
         Player.position.z += velocityZ * Delta;
         
+        if((velocityX || velocityZ) > 0 || (velocityX || velocityZ) < 0)
+        {
+            WheelModel.rotation.x += Speed;
+        }
+
         if (Player.position.y <= -20)
         {
             location.reload();
@@ -420,21 +531,25 @@ window.addEventListener("keydown", (event) =>
             case "KeyA":
                 console.log("KeyA")
                 velocityX = -Math.abs(Speed) ;
+                Player.rotation.y =  90 * Math.PI / 180;
                 break
 
             case "KeyD":
                 console.log("KeyD")
                 velocityX = Speed ;
+                Player.rotation.y =  -90 * Math.PI / 180;
                 break
 
             case "KeyW":
                 console.log("KeyW")
                 velocityZ = -Math.abs(Speed) ;
+                Player.rotation.y = 0;
                 break
     
             case "KeyS":
                 console.log("KeyS")
                 velocityZ = Speed ;
+                Player.rotation.y =  180 * Math.PI / 180;
                 break
 
             case "KeyL":
@@ -495,8 +610,6 @@ function onWindowresize() // function to resize when when changed
 
 window.addEventListener("resize", onWindowresize); // to activate function window size is changed
 
-   let SkyTex;
-
 const createskybox = () => // Skybox function
 {
     let bgMesh;
@@ -525,24 +638,6 @@ const createskybox = () => // Skybox function
         } 
     );
 }
-    switch (CurrentLevel)
-    {
-        case 0:
-            SkyTex = "Resources/Images/skybox.jpg";
-            break;
-
-        case 1:
-            SkyTex = "Resources/Images/mossy_forest_2k.png";
-            break;
-
-        case 2:
-            SkyTex = "Resources/Images/goegap_2k.png"; 
-            break;
-
-         case 3:
-            SkyTex = "Resources/Images/Nebula N0.png";
-            break;
-    }
 
 createskybox();
 
