@@ -18,14 +18,13 @@
     <!-- IN-GAME UI -->
 
     <div id="game-ui" class="ui-panel">
-        <div id="health">
-            <img src="./Resources\Images\UI\HEALTH.png" alt="FirstThreeJS" style="width:174px; height:35px;">
-            100
+        <div id="lives">
+            <img src="./Resources\Images\UI\LIVES.png" alt="FirstThreeJS" style="width:151px; height:36px;">
         </div>
 
         <div id="score">
             <img src="./Resources\Images\UI\SCORE.png" alt="FirstThreeJS" style="width:151px; height:36px;">
-            0
+            
         </div>
 
         <button id="pause-btn">
@@ -54,6 +53,11 @@
         <div id="finish-menu" class="ui-panel hidden">
 
             <img src="./Resources\Images\UI\LEVEL COMPLETED.png" alt="FirstThreeJS" style="width:1107px; height:125px;">
+
+            <div id="finish-score">
+                <img src="./Resources\Images\UI\SCORE.png" alt="FirstThreeJS" style="width:151px; height:36px;">
+                
+            </div>
     
             <button id="restart-btn">
                 <img src="./Resources\Images\UI\RESTART.png" alt="FirstThreeJS" style="width:251px; height:62px;">
@@ -66,6 +70,24 @@
             </button>
             
         </div>
+
+        <!-- game over MENU -->
+        <div id="game-over-menu" class="ui-panel hidden">
+
+            <img src="./Resources\Images\UI\GAME OVER.png" alt="FirstThreeJS" style="width:739px; height:125px;">
+            
+            <button id="restart-game-btn">
+                <img src="./Resources\Images\UI\RESTART.png" alt="FirstThreeJS" style="width:251px; height:62px;">
+            </button>
+            
+            <button id="quit-btn">
+                <a href="index.html">
+                    <img src="./Resources\Images\UI\QUIT TO TITLE.png" alt="FirstThreeJS" style="width:367px; height:71px;">
+                </a>
+            </button>
+                    
+        </div>
+        
 
         <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"> </script>
 

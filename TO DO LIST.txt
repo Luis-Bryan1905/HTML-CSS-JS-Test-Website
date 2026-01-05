@@ -37,6 +37,20 @@ Level Loading
 
 Level Goal
 
+Player Model
+
+Player Animations
+
+New Level skyboxes
+
+Collectibles
+
+Enemies
+
+Lives 
+
+Game Over screen
+
 
 
 
@@ -53,25 +67,11 @@ Working Login & Register Page
 
 TO DO (GAME):
 
-Player Model
-
-Player Animations
-
 Main Menu
 
 Level Select Screen
 
-Lives 
-
-Game Over screen
-
-Enemies
-
-Collectibles
-
 New Level assets  
-
-New Level skyboxes
 
 Level Music
 
@@ -101,5 +101,5 @@ Client-server communication (explain how it works and your message design). 
 
 --------------------------------------------------------------------------------------------
 WEBSITE = 8/10 = 80% Complete
-GAME = 8/20 =  40% Complete
+GAME = 15/20 =  75% Complete
 VIDEO = 0/8 =  0% Complete

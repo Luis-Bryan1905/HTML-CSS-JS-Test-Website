@@ -27,9 +27,17 @@ let gamePaused = false;
 
 let DebugStat = false;
  
-let CurrentLevel = 2;
+let CurrentLevel = 3;
 
 const grounds = [];
+
+const Bombs = [];
+
+const Items = [];
+
+let score = 0;
+
+let lives = 3;
 
 let FpsMode = 144;
 let Delta = 60 / FpsMode;
@@ -145,6 +153,110 @@ function loadLevel(path, CollisionType, uvANIM)
     });
 }
 
+function loadBomb(X, Y, Z) 
+{
+    loader.load('Resources/Models/Bomb.glb', (gltf) => 
+    {
+
+        const envLoader = new THREE.TextureLoader();
+
+        const environmentMap = envLoader.load(SkyTex, (tex) => //Convert Sky Texture to Enviroment Map
+        {
+            tex.mapping = THREE.EquirectangularReflectionMapping;
+            tex.colorSpace = THREE.SRGBColorSpace;
+        });
+
+        const model = gltf.scene;
+        model.traverse((child) => 
+        {
+            if (child.isMesh)
+                { 
+                    child.material.envMap = environmentMap; //Enviroment Map
+                    child.material.envMapIntensity = 1; // Enviroment Map strength
+                    child.material.needsUpdate = true;
+
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+
+                    const tex = child.material.map;
+
+                    tex.wrapS = THREE.RepeatWrapping;
+                    tex.wrapT = THREE.RepeatWrapping;
+                }
+        });
+        model.position.x = X;
+        model.position.y = Y;
+        model.position.z = Z;
+        scene.add(model);
+
+        Bombs.push(
+            {
+                mesh: model,
+                box: new THREE.Box3().setFromObject(model)
+            });
+
+    });
+}
+
+
+
+function loadItem(X, Y, Z) 
+{
+
+    loader.load('Resources/Models/Item.glb', (gltf) => 
+    {
+
+        const envLoader = new THREE.TextureLoader();
+
+        const environmentMap = envLoader.load(SkyTex, (tex) => //Convert Sky Texture to Enviroment Map
+        {
+            tex.mapping = THREE.EquirectangularReflectionMapping;
+            tex.colorSpace = THREE.SRGBColorSpace;
+        });
+
+        const model = gltf.scene;
+        model.traverse((child) => 
+        {
+            if (child.isMesh)
+                { 
+                    child.material.envMap = environmentMap; //Enviroment Map
+                    child.material.envMapIntensity = 1; // Enviroment Map strength
+                    child.material.needsUpdate = true;
+
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+
+                    const tex = child.material.map;
+
+                    tex.wrapS = THREE.RepeatWrapping;
+                    tex.wrapT = THREE.RepeatWrapping;
+                }
+        });
+        model.position.x = X;
+        model.position.y = Y;
+        model.position.z = Z;
+        
+
+        scene.add(model);
+
+        Items.push(
+        {
+            mesh: model,
+            box: new THREE.Box3().setFromObject(model)
+        });
+
+    });
+
+
+}
+
+const torusGeometry = new THREE.TorusGeometry( 2, 0.3, 16, 116 ); 
+const torus  = new THREE.Mesh( torusGeometry, material5 ); // Create torus object and set material
+torus.castShadow = true;
+torus.receiveShadow = true;
+scene.add( torus ); // Add torus  to scene
+let TorusAnimationSpeed = 0.05 * Delta; // Torus animation speed
+
 switch (CurrentLevel)
 {
 
@@ -154,6 +266,10 @@ switch (CurrentLevel)
         loadLevel("Resources/Models/TestLevel/TestLevel_02.glb", 1, 0);
         loadLevel("Resources/Models/TestLevel/TestLevel_03.glb", 1, 0);
         loadLevel("Resources/Models/TestLevel/TestLevel_04.glb", 1, 0);
+
+        torus.position.x = 15;
+        torus.position.z = 0;
+        torus.position.y = 5;
         break;
 
     case 1:
@@ -169,6 +285,11 @@ switch (CurrentLevel)
         loadLevel("Resources/Models/Level1/Level1_10.glb", 1, 0);
         loadLevel("Resources/Models/Level1/Level1_11.glb", 1, 0);
         loadLevel("Resources/Models/Level1/Level1_12.glb", 1, 0);
+        
+        torus.position.x = 45;
+        torus.position.z = -30;
+        torus.position.y = 52;
+
         break;
 
     case 2:
@@ -196,10 +317,22 @@ switch (CurrentLevel)
         loadLevel("Resources/Models/Level2/Level2_22.glb", 0, 0);
         loadLevel("Resources/Models/Level2/Level2_23.glb", 0, 0);
 
+        torus.position.x = 0;
+        torus.position.z = -270;
+        torus.position.y = 18;
+
         break;
 
     default:
         loadLevel("Resources/Models/TestLevel/TestLevel.glb", 1);
+
+        loadBomb(15, 4, 0);
+
+        loadItem(-15, 4, 0);
+        
+        torus.position.x = 0;
+        torus.position.z = 0;
+        torus.position.y = 5;
         break;
 
 }
@@ -228,36 +361,6 @@ function collectUvMaps(material, uvANIM)
         });
     }
 }
-
-const torusGeometry = new THREE.TorusGeometry( 2, 0.3, 16, 116 ); 
-const torus  = new THREE.Mesh( torusGeometry, material5 ); // Create torus object and set material
-torus.castShadow = true;
-torus.receiveShadow = true;
-scene.add( torus ); // Add torus  to scene
-let TorusAnimationSpeed = 0.05 * Delta; // Torus animation speed
-
-switch (CurrentLevel) // level goal placements
-{
-    case 0:
-        torus.position.x = 15;
-        torus.position.z = 0;
-        torus.position.y = 5;
-        break;
-
-    case 1:
-        torus.position.x = 45;
-        torus.position.z = -30;
-        torus.position.y = 52;
-        break;
-
-    case 2:
-        torus.position.x = 0;
-        torus.position.z = -270;
-        torus.position.y = 18;
-        break;
-}
-
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 
 const CapsuleGeometry = new THREE.CapsuleGeometry( 0.0001, 0.0001, 4, 8, 1 );
 const Player = new THREE.Mesh(CapsuleGeometry, material5);
@@ -320,6 +423,15 @@ loader.load('Resources/Models/PlayerWheel.glb', (gltf) => {
     PlayerModel.add(WheelModel);
 });
 
+function LoseLife()
+{
+    lives -= 1;
+
+    Player.position.x = 0;
+    Player.position.y = 55;
+    Player.position.z = 15;
+}
+
 Player.position.x = 0;
 Player.position.y = 55;
 Player.position.z = 15;
@@ -359,10 +471,17 @@ let velocityZ = 0;     // Forwrds and Backwards speed
 
 let canJump; // Can the player Jump?
 
+const LivesImage = document.getElementById("lives").innerHTML;
+const ScoreImage = document.getElementById("score").innerHTML;
+const FinishScoreImage = document.getElementById("finish-score").innerHTML;
 
 function animate()  // Animation Function
 {
     stats.update(); //Update the stats inside the animation loop
+
+    document.getElementById("score").innerHTML = (ScoreImage + score);
+    document.getElementById("finish-score").innerHTML = (FinishScoreImage + score);
+    document.getElementById("lives").innerHTML = (LivesImage + lives);
 
     if (!gamePaused) 
     {
@@ -431,8 +550,49 @@ function animate()  // Animation Function
         if (playerBox.intersectsBox(TorusBox)) //if player interects ground
         {
             gamePaused = true;
+            gameUI.classList.add("hidden");
             finishMenu.classList.remove("hidden");
         }
+
+        for (const bomb of Bombs) 
+            {
+                if (playerBox.intersectsBox(bomb.box)) //if player interects ground
+                {
+                                        
+                    LoseLife();
+
+                    // Recalculate playerBox after moving
+                    playerBox.setFromObject(Player);
+
+                    scene.remove(bomb.mesh);
+                    Bombs.splice(Bombs, 1); // remove from array
+                }
+                
+            }
+
+        if (lives <= 0)
+        {
+            gamePaused = true;
+            GameOverMenu.classList.remove("hidden");
+        }
+
+        for (const item of Items) 
+            {
+
+                item.mesh.rotation.y += 0.025;
+
+                if (playerBox.intersectsBox(item.box)) //if player interects ground
+                {
+                    score += 100;
+
+                    // Recalculate playerBox after moving
+                    playerBox.setFromObject(Player);
+
+                    scene.remove(item.mesh);
+                    Items.splice(Items, 1); // remove from array
+                }
+                
+            }
 
         camera.position.x =  Player.position.x;
         camera.position.z = Player.position.z + cameraZ;
@@ -646,24 +806,35 @@ createskybox();
 const gameUI = document.getElementById("game-ui");
 const pauseMenu = document.getElementById("pause-menu");
 const finishMenu = document.getElementById("finish-menu");
+const GameOverMenu = document.getElementById("game-over-menu");
 
 const pauseBtn = document.getElementById("pause-btn");
 const resumeBtn = document.getElementById("resume-btn");
 const restartbtn = document.getElementById("restart-btn");
+const restartgamebtn = document.getElementById("restart-game-btn");
 
 // Pause the game
-pauseBtn.addEventListener("click", () => {
+pauseBtn.addEventListener("click", () => 
+{
     gamePaused = true;
     pauseMenu.classList.remove("hidden");
 });
 
 // Resume
-resumeBtn.addEventListener("click", () => {
+resumeBtn.addEventListener("click", () => 
+{
     gamePaused = false;
     pauseMenu.classList.add("hidden");
 });
 
+// Resume
+restartgamebtn.addEventListener("click", () => 
+{
+    location.reload();
+});
+
 // Quit → reload the page
-restartbtn.addEventListener("click", () => {
+restartbtn.addEventListener("click", () => 
+{
     location.reload();
 });
