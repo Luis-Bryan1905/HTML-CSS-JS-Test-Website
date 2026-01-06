@@ -1,9 +1,11 @@
-Game Name:
+Game Name: 3D WORLDS
 Author: Luis Bryan
-Update Date/Time:
-Version:
-Description:
+Update Date/Time: 06/01/26
+Version: 1.0
 How to Play:
+* WASD to Move
+
+* L to Jump
 
 Folder Structure:
 Root:
@@ -25,5 +27,6 @@ UI Fonts: OZONE Logo Generator https://cooltext.com/Logo-Design-OZONE & Supernov
 Textures Taken from https://ambientcg.com/
 
 Skybox:
+Test Level - https://www.blockadelabs.com/
 Forest - https://polyhaven.com/a/mossy_forest
 Desert - https://polyhaven.com/a/goegap

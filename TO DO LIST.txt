@@ -51,6 +51,12 @@ Lives
 
 Game Over screen
 
+Main Menu
+
+Level Select Screen
+
+New Level assets  
+
 
 
 
@@ -67,11 +73,7 @@ Working Login & Register Page
 
 TO DO (GAME):
 
-Main Menu
 
-Level Select Screen
-
-New Level assets  
 
 Level Music
 
@@ -101,5 +103,5 @@ Client-server communication (explain how it works and your message design). 
 
 --------------------------------------------------------------------------------------------
 WEBSITE = 8/10 = 80% Complete
-GAME = 15/20 =  75% Complete
+GAME = 18/20 =  90% Complete
 VIDEO = 0/8 =  0% Complete

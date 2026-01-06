@@ -23,11 +23,12 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
 document.body.appendChild( renderer.domElement ); // add the renderer to the HTML
 
 // GAME STATE
+let gameStarted = false;
 let gamePaused = false;
 
 let DebugStat = false;
  
-let CurrentLevel = 3;
+let CurrentLevel = null;
 
 const grounds = [];
 
@@ -37,31 +38,12 @@ const Items = [];
 
 let score = 0;
 
-let lives = 3;
+let lives = 100;
 
 let FpsMode = 144;
 let Delta = 60 / FpsMode;
 
 let SkyTex;
-
-switch (CurrentLevel)
-{
-    case 0:
-        SkyTex = "Resources/Images/skybox.jpg";
-        break;
-
-    case 1:
-        SkyTex = "Resources/Images/mossy_forest_2k.png";
-        break;
-
-    case 2:
-        SkyTex = "Resources/Images/goegap_2k.png"; 
-        break;
-
-     case 3:
-        SkyTex = "Resources/Images/Nebula N0.png";
-        break;
-}
 
 const uvAnimatedTextures = [];
 let uvAnimationSpeed = 0.02;
@@ -257,84 +239,263 @@ torus.receiveShadow = true;
 scene.add( torus ); // Add torus  to scene
 let TorusAnimationSpeed = 0.05 * Delta; // Torus animation speed
 
-switch (CurrentLevel)
+function loadCurrentLevel() 
 {
+    switch (CurrentLevel)
+    {
+        case 0:
+            SkyTex = "Resources/Images/skybox.jpg";
 
-    case 0:
-        loadLevel("Resources/Models/TestLevel/TestLevel.glb", 1, 0);
-        loadLevel("Resources/Models/TestLevel/TestLevel_01.glb", 1, 0);
-        loadLevel("Resources/Models/TestLevel/TestLevel_02.glb", 1, 0);
-        loadLevel("Resources/Models/TestLevel/TestLevel_03.glb", 1, 0);
-        loadLevel("Resources/Models/TestLevel/TestLevel_04.glb", 1, 0);
+            loadLevel("Resources/Models/TestLevel/TestLevel.glb", 1, 0);
+            loadLevel("Resources/Models/TestLevel/TestLevel_01.glb", 1, 0);
+            loadLevel("Resources/Models/TestLevel/TestLevel_02.glb", 1, 0);
+            loadLevel("Resources/Models/TestLevel/TestLevel_03.glb", 1, 0);
+            loadLevel("Resources/Models/TestLevel/TestLevel_04.glb", 1, 0);
 
-        torus.position.x = 15;
-        torus.position.z = 0;
-        torus.position.y = 5;
-        break;
+            loadBomb(5, 4, 0);
 
-    case 1:
-        loadLevel("Resources/Models/Level1/Level1_01.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_02.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_03.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_04.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_05.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_06.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_07.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_08.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_09.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_10.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_11.glb", 1, 0);
-        loadLevel("Resources/Models/Level1/Level1_12.glb", 1, 0);
-        
-        torus.position.x = 45;
-        torus.position.z = -30;
-        torus.position.y = 52;
+            loadItem(-5, 3, 0);
 
-        break;
+            torus.position.x = 15;
+            torus.position.z = 0;
+            torus.position.y = 5;
+            break;
 
-    case 2:
-        loadLevel("Resources/Models/Level2/Level2_01.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_02.glb", 0, 2);
-        loadLevel("Resources/Models/Level2/Level2_03.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_04.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_05.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_06.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_07.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_08.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_09.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_10.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_11.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_12.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_13.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_14.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_15.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_16.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_17.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_18.glb", 1, 0);
-        loadLevel("Resources/Models/Level2/Level2_19.glb", 0, 2);
-        loadLevel("Resources/Models/Level2/Level2_20.glb", 0, 2);
-        loadLevel("Resources/Models/Level2/Level2_21.glb", 0, 0);
-        loadLevel("Resources/Models/Level2/Level2_22.glb", 0, 0);
-        loadLevel("Resources/Models/Level2/Level2_23.glb", 0, 0);
+        case 1:
+            SkyTex = "Resources/Images/mossy_forest_2k.png";
 
-        torus.position.x = 0;
-        torus.position.z = -270;
-        torus.position.y = 18;
+            loadLevel("Resources/Models/Level1/Level1_01.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_02.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_03.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_04.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_05.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_06.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_07.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_08.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_09.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_10.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_11.glb", 1, 0);
+            loadLevel("Resources/Models/Level1/Level1_12.glb", 1, 0);
+            
+            loadBomb(7, 11, 1);
+            loadBomb(7, 11, 13);
+            loadBomb(33.000, 11.000, -5.000);
+            loadBomb(33.000, 11.000, -1.000);
+            loadBomb(33.000, 11.000, 3.000);
+            loadBomb(33.000, 11.000, 7.000);
+            loadBomb(33.000, 11.000, 11.000);
+            loadBomb(33.000, 11.000, 15.000);
+            loadBomb(33.000, 11.000, 19.000);
+            loadBomb(43.000, 21.000, -5.000);
+            loadBomb(43.000, 21.000, -1.000);
+            loadBomb(43.000, 21.000, 3.000);
+            loadBomb(43.000, 21.000, 7.000);
+            loadBomb(43.000, 21.000, 11.000);
+            loadBomb(43.000, 21.000, 15.000);
+            loadBomb(43.000, 21.000, 19.000);
+            loadBomb(13.000, 36.000, 11.000);
+            loadBomb(17.000, 36.000, 11.000);
+            loadBomb(21.000, 36.000, 11.000);
+            loadBomb(9.000, 36.000, 11.000);
+            loadBomb(13.000, 36.000, -3.000);
+            loadBomb(17.000, 36.000, -3.000);
+            loadBomb(21.000, 36.000, -3.000);
+            loadBomb(9.000, 36.000, -3.000);
+            loadBomb(9.000, 36.000, 6.000);
+            loadBomb(9.000, 36.000, 1.000);
+            loadBomb(21.000, 36.000, 6.000);
+            loadBomb(21.000, 36.000, 1.000);
+            loadBomb(2.000, 41.000, -18.000);
+            loadBomb(-2.000, 41.000, -18.000);
+            loadBomb(36.000, 51.000, -40.000);
+            loadBomb(36.000, 51.000, -45.000);
+            loadBomb(36.000, 51.000, -35.000);
+            loadBomb(36.000, 51.000, -30.000);
+            loadBomb(36.000, 51.000, -25.000);
+            loadBomb(36.000, 51.000, -20.000);
+            loadBomb(16.000, 51.000, -40.000);
+            loadBomb(16.000, 51.000, -45.000);
+            loadBomb(16.000, 51.000, -35.000);
+            loadBomb(16.000, 51.000, -30.000);
+            loadBomb(16.000, 51.000, -25.000);
+            loadBomb(16.000, 51.000, -20.000);
+            loadBomb(21.000, 51.000, -20.000);
+            loadBomb(26.000, 51.000, -20.000);
+            loadBomb(31.000, 51.000, -20.000);
+            loadBomb(21.000, 51.000, -45.000);
+            loadBomb(26.000, 51.000, -45.000);
+            loadBomb(31.000, 51.000, -45.000);
+            loadBomb(26.000, 51.000, -25.000);
+            loadBomb(21.000, 51.000, -30.000);
+            loadBomb(31.000, 51.000, -30.000);
+            loadBomb(26.000, 51.000, -35.000);
+            loadBomb(21.000, 51.000, -40.000);
+            loadBomb(31.000, 51.000, -40.000);
 
-        break;
 
-    default:
-        loadLevel("Resources/Models/TestLevel/TestLevel.glb", 1);
+            loadItem(0, 4, 7);  // Item
+            loadItem(7, 10, 7); // Item.001
+            loadItem(38, 20, 8); // Item.002
+            loadItem(50, 25, 8); // Item.003
+            loadItem(50, 30, -12); // Item.004
+            loadItem(45, 30, -12); // Item.005
+            loadItem(40, 30, -12); // Item.006
+            loadItem(13, 35, 6); // Item.007
+            loadItem(17, 35, 6); // Item.008
+            loadItem(17, 35, 1); // Item.009
+            loadItem(14, 35, 1); // Item.010
+            loadItem(31, 50, -35); // Item.011
+            loadItem(21, 50, -35); // Item.012
+            loadItem(26, 50, -40); // Item.013
+            loadItem(31, 50, -25); // Item.014
+            loadItem(21, 50, -25); // Item.015
+            loadItem(26, 50, -30); // Item.016
 
-        loadBomb(15, 4, 0);
+            torus.position.x = 45;
+            torus.position.z = -30;
+            torus.position.y = 52;
 
-        loadItem(-15, 4, 0);
-        
-        torus.position.x = 0;
-        torus.position.z = 0;
-        torus.position.y = 5;
-        break;
+            break;
 
+        case 2:
+            SkyTex = "Resources/Images/goegap_2k.png"; 
+
+            loadLevel("Resources/Models/Level2/Level2_01.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_02.glb", 0, 2);
+            loadLevel("Resources/Models/Level2/Level2_03.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_04.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_05.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_06.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_07.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_08.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_09.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_10.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_11.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_12.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_13.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_14.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_15.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_16.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_17.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_18.glb", 1, 0);
+            loadLevel("Resources/Models/Level2/Level2_19.glb", 0, 2);
+            loadLevel("Resources/Models/Level2/Level2_20.glb", 0, 2);
+            loadLevel("Resources/Models/Level2/Level2_21.glb", 0, 0);
+            loadLevel("Resources/Models/Level2/Level2_22.glb", 0, 0);
+            loadLevel("Resources/Models/Level2/Level2_23.glb", 0, 0);
+
+            loadBomb(7, 3, -17);
+            loadBomb(2, 3, -17);
+            loadBomb(-3, 3, -17);
+            loadBomb(-8, 3, -17);
+            loadBomb(7, 3, -247);
+            loadBomb(2, 3, -247);
+            loadBomb(-3, 3, -247);
+            loadBomb(-8, 3, -247);
+            loadBomb(7, 11, -258);
+            loadBomb(2, 11, -258);
+            loadBomb(-3, 11, -258);
+            loadBomb(-13, 11, -258);
+            loadBomb(-8, 11, -258);
+            loadBomb(12, 11, -258);
+            loadBomb(17, 3, -247);
+            loadBomb(12, 3, -247);
+            loadBomb(22, 3, -247);
+            loadBomb(-18, 3, -247);
+            loadBomb(-23, 3, -247);
+            loadBomb(-13, 3, -247);
+            loadBomb(22, 3, -281);
+            loadBomb(22, 3, -276);
+            loadBomb(22, 3, -271);
+            loadBomb(22, 3, -266);
+            loadBomb(-23, 3, -281);
+            loadBomb(22, 3, -286);
+            loadBomb(-23, 3, -276);
+            loadBomb(22, 3, -256);
+            loadBomb(22, 3, -251);
+            loadBomb(22, 3, -261);
+            loadBomb(-23, 3, -271);
+            loadBomb(-23, 3, -266);
+            loadBomb(-23, 3, -286);
+            loadBomb(-23, 3, -256);
+            loadBomb(-23, 3, -251);
+            loadBomb(-23, 3, -261);
+            loadBomb(7, 3, -292);
+            loadBomb(2, 3, -292);
+            loadBomb(-3, 3, -292);
+            loadBomb(-8, 3, -292);
+            loadBomb(17, 3, -292);
+            loadBomb(12, 3, -292);
+            loadBomb(22, 3, -292);
+            loadBomb(-18, 3, -292);
+            loadBomb(-23, 3, -292);
+            loadBomb(-13, 3, -292);
+            loadBomb(7, 11, -282);
+            loadBomb(2, 11, -282);
+            loadBomb(-3, 11, -282);
+            loadBomb(-13, 11, -282);
+            loadBomb(-8, 11, -282);
+            loadBomb(12, 11, -282);
+            loadBomb(12, 11, -263);
+            loadBomb(12, 11, -268);
+            loadBomb(12, 11, -273);
+            loadBomb(12, 11, -278);
+            loadBomb(12, 11, -263);
+            loadBomb(12, 11, -268);
+            loadBomb(12, 11, -278);
+            loadBomb(-13, 11, -273);
+            loadBomb(-13, 11, -263);
+            loadBomb(-13, 11, -268);
+            loadBomb(-13, 11, -278);
+            loadBomb(5, -19, -118);
+            loadBomb(-3, -14, -155);
+            loadBomb(-5, -19, -118);
+            loadBomb(-4, -10, -168);
+            loadBomb(5, -19, -139);
+            loadBomb(-5, -19, -139);
+            loadBomb(5, -19, -129);
+            loadBomb(0, -19, -124);
+            loadBomb(-5, -19, -129);
+            loadBomb(-10, -19, -124);
+            loadBomb(10, -19, -124);
+            loadBomb(0, -19, -134);
+            loadBomb(-10, -19, -134);
+            loadBomb(10, -19, -134);
+
+            loadItem(0, 4, 7);
+            loadItem(0, 2, -34);
+            loadItem(-8, 2, -51);
+            loadItem(-8, 2, -70);
+            loadItem(3, 2, -80);
+            loadItem(0, 2, -92);
+            loadItem(2, -15, -155);
+            loadItem(-9, -11, -168);
+            loadItem(-9, -6, -182);
+            loadItem(-3, -2, -196);
+            loadItem(4, 1, -211);
+            loadItem(0, -20, -118);
+            loadItem(-10, -20, -118);
+            loadItem(10, -20, -118);
+            loadItem(0, -20, -129);
+            loadItem(-10, -20, -129);
+            loadItem(10, -20, -129);
+            loadItem(0, -20, -139);
+            loadItem(-10, -20, -139);
+            loadItem(10, -20, -139);
+            loadItem(-5, -20, -124);
+            loadItem(5, -20, -124);
+            loadItem(-5, -20, -134);
+            loadItem(5, -20, -134);
+
+            torus.position.x = 0;
+            torus.position.z = -270;
+            torus.position.y = 18;
+
+            break;
+
+    }
+
+    createskybox();
 }
 
 function collectUvMaps(material, uvANIM)
@@ -425,11 +586,16 @@ loader.load('Resources/Models/PlayerWheel.glb', (gltf) => {
 
 function LoseLife()
 {
-    lives -= 1;
+    lives -= 10;
 
     Player.position.x = 0;
     Player.position.y = 55;
     Player.position.z = 15;
+}
+
+function AddScore()
+{
+    score += 100; 
 }
 
 Player.position.x = 0;
@@ -475,6 +641,21 @@ const LivesImage = document.getElementById("lives").innerHTML;
 const ScoreImage = document.getElementById("score").innerHTML;
 const FinishScoreImage = document.getElementById("finish-score").innerHTML;
 
+function RestartLevel()  // Animation Function
+{
+
+    score = 0;
+
+    lives = 100;
+
+    Player.position.x = 0;
+    Player.position.y = 55;
+    Player.position.z = 15;
+
+    loadCurrentLevel();
+}
+
+
 function animate()  // Animation Function
 {
     stats.update(); //Update the stats inside the animation loop
@@ -483,7 +664,7 @@ function animate()  // Animation Function
     document.getElementById("finish-score").innerHTML = (FinishScoreImage + score);
     document.getElementById("lives").innerHTML = (LivesImage + lives);
 
-    if (!gamePaused) 
+    if (!gamePaused  || !gameStarted) 
     {
 
         Player.position.x += velocityX  * Delta;
@@ -497,7 +678,9 @@ function animate()  // Animation Function
 
         if (Player.position.y <= -20)
         {
-            location.reload();
+            Player.position.x = 0;
+            Player.position.y = 55;
+            Player.position.z = 15;
         }
 
         torus.rotation.y += TorusAnimationSpeed; // rotate torus
@@ -554,8 +737,11 @@ function animate()  // Animation Function
             finishMenu.classList.remove("hidden");
         }
 
-        for (const bomb of Bombs) 
+        //for (const bomb of Bombs)
+        for (let b = Bombs.length - 1; b >= 0; b--) 
             {
+            
+                const bomb = Bombs[b];
                 if (playerBox.intersectsBox(bomb.box)) //if player interects ground
                 {
                                         
@@ -565,7 +751,7 @@ function animate()  // Animation Function
                     playerBox.setFromObject(Player);
 
                     scene.remove(bomb.mesh);
-                    Bombs.splice(Bombs, 1); // remove from array
+                    Bombs.splice(b, 1); // remove from array
                 }
                 
             }
@@ -576,20 +762,24 @@ function animate()  // Animation Function
             GameOverMenu.classList.remove("hidden");
         }
 
-        for (const item of Items) 
-            {
+       // for (const item of Items) 
+        for (let i = Items.length - 1; i >= 0; i--) 
+        {
+        
+            const item = Items[i];
 
                 item.mesh.rotation.y += 0.025;
+                item.box.setFromObject(item.mesh);
 
                 if (playerBox.intersectsBox(item.box)) //if player interects ground
                 {
-                    score += 100;
+                    AddScore();
 
                     // Recalculate playerBox after moving
                     playerBox.setFromObject(Player);
 
                     scene.remove(item.mesh);
-                    Items.splice(Items, 1); // remove from array
+                    Items.splice(i, 1); // remove from array
                 }
                 
             }
@@ -799,19 +989,68 @@ const createskybox = () => // Skybox function
     );
 }
 
-createskybox();
-
 
 // UI ELEMENTS
+const mainMenu = document.getElementById("main-menu");
+const levelSelect = document.getElementById("level-select");
 const gameUI = document.getElementById("game-ui");
 const pauseMenu = document.getElementById("pause-menu");
 const finishMenu = document.getElementById("finish-menu");
 const GameOverMenu = document.getElementById("game-over-menu");
 
+const level0Btn = document.getElementById("level-0");
+const level1Btn = document.getElementById("level-1");
+const level2Btn = document.getElementById("level-2");
+
+const playBtn = document.getElementById("play-game-btn");
+const QuitToTitleBtn = document.getElementById("quit-to-title-btn");
 const pauseBtn = document.getElementById("pause-btn");
 const resumeBtn = document.getElementById("resume-btn");
 const restartbtn = document.getElementById("restart-btn");
 const restartgamebtn = document.getElementById("restart-game-btn");
+
+QuitToTitleBtn.addEventListener("click", () => 
+{
+    location.reload();
+});
+
+// Start Game
+playBtn.addEventListener("click", () => 
+{
+    mainMenu.classList.add("hidden");
+    levelSelect.classList.remove("hidden");
+    
+});
+
+// Level 0
+level0Btn.addEventListener("click", () => 
+{
+    CurrentLevel = 0;
+    levelSelect.classList.add("hidden");
+    gameUI.classList.remove("hidden");
+    loadCurrentLevel();
+    gameStarted = true;
+});
+
+// Level 1
+level1Btn.addEventListener("click", () => 
+{
+    CurrentLevel = 1;
+    levelSelect.classList.add("hidden");
+    gameUI.classList.remove("hidden");
+    loadCurrentLevel();
+    gameStarted = true;
+});
+
+// Level 2
+level2Btn.addEventListener("click", () => 
+{
+    CurrentLevel = 2;
+    levelSelect.classList.add("hidden");
+    gameUI.classList.remove("hidden");
+    loadCurrentLevel();
+    gameStarted = true;
+});
 
 // Pause the game
 pauseBtn.addEventListener("click", () => 
@@ -827,14 +1066,20 @@ resumeBtn.addEventListener("click", () =>
     pauseMenu.classList.add("hidden");
 });
 
-// Resume
+// Restart from Game Over
 restartgamebtn.addEventListener("click", () => 
 {
-    location.reload();
+    RestartLevel();
+    gamePaused = false;
+    gameUI.classList.remove("hidden");
+    GameOverMenu.classList.add("hidden");
 });
 
-// Quit → reload the page
+// restart from finish menu
 restartbtn.addEventListener("click", () => 
 {
-    location.reload();
+    RestartLevel();
+    gamePaused = false;
+    gameUI.classList.remove("hidden");
+    finishMenu.classList.add("hidden");
 });

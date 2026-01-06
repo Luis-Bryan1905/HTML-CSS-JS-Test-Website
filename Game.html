@@ -19,7 +19,7 @@
 
     <div id="game-ui" class="ui-panel">
         <div id="lives">
-            <img src="./Resources\Images\UI\LIVES.png" alt="FirstThreeJS" style="width:151px; height:36px;">
+            <img src="./Resources\Images\UI\HEALTH.png" alt="FirstThreeJS" style="width:151px; height:36px;">
         </div>
 
         <div id="score">
@@ -41,10 +41,8 @@
             <img src="./Resources\Images\UI\RESUME.png" alt="FirstThreeJS" style="width:251px; height:62px;">
         </button>
 
-        <button id="quit-btn">
-            <a href="index.html">
+        <button id="quit-to-title-btn">
                 <img src="./Resources\Images\UI\QUIT TO TITLE.png" alt="FirstThreeJS" style="width:367px; height:71px;">
-            </a>
         </button>
         
     </div>
@@ -55,7 +53,7 @@
             <img src="./Resources\Images\UI\LEVEL COMPLETED.png" alt="FirstThreeJS" style="width:1107px; height:125px;">
 
             <div id="finish-score">
-                <img src="./Resources\Images\UI\SCORE.png" alt="FirstThreeJS" style="width:151px; height:36px;">
+                <img src="./Resources\Images\UI\SCORE.png" alt="FirstThreeJS" style="width:302px; height:72px;">
                 
             </div>
     
@@ -63,10 +61,8 @@
                 <img src="./Resources\Images\UI\RESTART.png" alt="FirstThreeJS" style="width:251px; height:62px;">
             </button>
     
-            <button id="quit-btn">
-                <a href="index.html">
+            <button id="quit-to-title-btn">
                     <img src="./Resources\Images\UI\QUIT TO TITLE.png" alt="FirstThreeJS" style="width:367px; height:71px;">
-                </a>
             </button>
             
         </div>
@@ -80,14 +76,66 @@
                 <img src="./Resources\Images\UI\RESTART.png" alt="FirstThreeJS" style="width:251px; height:62px;">
             </button>
             
-            <button id="quit-btn">
-                <a href="index.html">
+            <button id="quit-to-title-btn">
                     <img src="./Resources\Images\UI\QUIT TO TITLE.png" alt="FirstThreeJS" style="width:367px; height:71px;">
-                </a>
             </button>
                     
         </div>
+
+        <!-- Main MENU -->
+        <div id="main-menu" class="menu-panel">
+
+            <img src="./Resources\Images\UI\3D WORLDS.png" alt="FirstThreeJS" style="width:752px; height:108px;">
+            
+            <br>
+
+            <button id="play-game-btn">
+                <img src="./Resources\Images\UI\PLAY.png" alt="FirstThreeJS" style="width:165px; height:62px;">
+            </button>
+            
+            <br>
+
+            <button id="quit-btn">
+                <a href="index.html">
+                    <img src="./Resources\Images\UI\QUIT.png" alt="FirstThreeJS" style="width:165px; height:62px;">
+                </a>
+            </button>
+
+            <br>
+            <br>
+            <br>
+                            
+        </div>
         
+        <!-- Level Select -->
+        <div id="level-select" class="menu-panel hidden">
+
+            <img src="./Resources\Images\UI\LEVEL SELECT.png" alt="FirstThreeJS" style="width:1001px; height:107px;">
+            
+            <br>
+
+            <button id="level-0">
+                <img src="./Resources\Images\UI\LEVEL 0 - TEST.png" alt="FirstThreeJS" style="width:442px; height:62px;">
+            </button>
+            
+            <br>
+
+            <button id="level-1">
+                <img src="./Resources\Images\UI\LEVEL 1 - FOREST.png" alt="FirstThreeJS" style="width:517px; height:62px;">
+            </button>
+
+            <br>
+
+            <button id="level-2">
+                <img src="./Resources\Images\UI\LEVEL 2 - DESERT.png" alt="FirstThreeJS" style="width:523px; height:62px;">
+            </button>
+
+            <br>
+            <br>
+            <br>
+                            
+        </div>
+
 
         <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"> </script>
 
