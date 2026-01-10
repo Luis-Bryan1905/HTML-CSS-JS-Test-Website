@@ -22,6 +22,57 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
 
 document.body.appendChild( renderer.domElement ); // add the renderer to the HTML
 
+// AUDIO MANAGER
+
+let music = null;
+
+let audioUnlocked = false; // browsers block autoplay, audio can only start after a user interaction.
+
+function unlockAudio() 
+{
+    if (audioUnlocked) return;
+
+    audioUnlocked = true;
+}
+
+window.addEventListener("keydown", unlockAudio, { once: true });
+window.addEventListener("mousedown", unlockAudio, { once: true });
+
+function playMusic(src, volume = 0.5, loop = true) 
+{
+    if (music) 
+    {
+        music.pause();
+        music.currentTime = 0;
+    }
+
+    music = new Audio(src);
+    music.loop = loop;
+    music.volume = volume;
+    music.play();
+}
+
+let sfx = {};
+
+
+function loadSFX(name, src, volume = 1.0) {
+    const audio = new Audio(src);
+    audio.volume = volume;
+    sfx[name] = audio;
+}
+
+function playSFX(name) {
+    if (!sfx[name]) return;
+
+    // clone so multiple sounds can overlap
+    const sound = sfx[name].cloneNode();
+    sound.volume = sfx[name].volume;
+    sound.play();
+}
+
+loadSFX("pickup", "./Resources/Music/juancamiloorjuela__pick-up-health.wav", 0.7);
+loadSFX("damage", "./Resources/Music/sieuamthanh__no-4.wav", 0.8);
+
 // GAME STATE
 let gameStarted = false;
 let gamePaused = false;
@@ -244,6 +295,9 @@ function loadCurrentLevel()
     switch (CurrentLevel)
     {
         case 0:
+
+            playMusic("./Resources/Music/frankum_ambient-electronic-music.mp3", 0.4);
+
             SkyTex = "Resources/Images/skybox.jpg";
 
             loadLevel("Resources/Models/TestLevel/TestLevel.glb", 1, 0);
@@ -262,6 +316,9 @@ function loadCurrentLevel()
             break;
 
         case 1:
+
+            playMusic("./Resources/Music/viramiller__morning-in-the-forest.mp3", 0.4);
+
             SkyTex = "Resources/Images/mossy_forest_2k.png";
 
             loadLevel("Resources/Models/Level1/Level1_01.glb", 1, 0);
@@ -358,6 +415,8 @@ function loadCurrentLevel()
             break;
 
         case 2:
+            playMusic("./Resources/Music/vrymaa__louxor-desert-caravan.wav", 0.4);
+
             SkyTex = "Resources/Images/goegap_2k.png"; 
 
             loadLevel("Resources/Models/Level2/Level2_01.glb", 1, 0);
@@ -744,7 +803,7 @@ function animate()  // Animation Function
                 const bomb = Bombs[b];
                 if (playerBox.intersectsBox(bomb.box)) //if player interects ground
                 {
-                                        
+                    playSFX("damage");
                     LoseLife();
 
                     // Recalculate playerBox after moving
@@ -773,6 +832,7 @@ function animate()  // Animation Function
 
                 if (playerBox.intersectsBox(item.box)) //if player interects ground
                 {
+                    playSFX("pickup");
                     AddScore();
 
                     // Recalculate playerBox after moving

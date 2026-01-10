@@ -16,7 +16,7 @@ Root:
 			-- UI: contains all Images used for the game's UI
 		-- Music:  contains all Music files
 		-- Models:  contains all 3D Model files
-			-- Scenes:  contains all Blender scenes for game's levels
+		-- Scenes:  contains all Blender scenes for game's levels
 
 References:
 Background is referenced from: https://www.freepik.com/free-vector/matrix-style-binary-code-digital-falling-numbers-blue-background_24600855.htm

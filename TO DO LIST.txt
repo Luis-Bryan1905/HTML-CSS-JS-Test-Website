@@ -16,6 +16,9 @@ Music on Website
 
 Improve website aesthetics
 
+Working Account database
+
+Working Login & Register Page
 
 
 
@@ -57,31 +60,15 @@ Level Select Screen
 
 New Level assets  
 
-
-
-
-FINISHED (VIDEO):
-
---------------------------------------------------------------------------------------------
-TO DO (WEBSITE): 
-
-Working Account database
-
-Working Login & Register Page
-
-
-
-TO DO (GAME):
-
-
-
 Level Music
 
 Sound Effects
 
 
 
-TO DO (VIDEO): 
+
+FINISHED (VIDEO):
+
 
 40 seconds game demo at the beginning
 
@@ -102,6 +89,19 @@ Client-server communication (explain how it works and your message design). 
 (must be .mp4  or .wav format. Please do not embed it in Powerpoint!)
 
 --------------------------------------------------------------------------------------------
-WEBSITE = 8/10 = 80% Complete
-GAME = 18/20 =  90% Complete
-VIDEO = 0/8 =  0% Complete
+TO DO (WEBSITE): 
+
+
+
+TO DO (GAME):
+
+
+
+TO DO (VIDEO): 
+
+
+
+--------------------------------------------------------------------------------------------
+WEBSITE = 10/10 = 100% Complete
+GAME = 20/20 =  100% Complete
+VIDEO = 8/8 =  100% Complete
